@@ -31,6 +31,8 @@ namespace DTCWaitingList
             Resultados = new ObservableCollection<Paciente>();
             // Define o contexto de dados para a ListView
             MockResultados();
+            listView.ItemsSource = Resultados;
+
             DataContext = this;
         }
 
@@ -75,44 +77,27 @@ namespace DTCWaitingList
                 NovoPaciente = true,
                 DataEntradaFilaEspera = DateTime.Now.AddDays(-10)
             });
-
-            listView.ItemsSource = Resultados;
         }
 
         private void Procurar_Click(object sender, RoutedEventArgs e)
         {
-            // Limpa os resultados anteriores
-            Resultados.Clear();
+            var resultadosFiltrados = new ObservableCollection<Paciente>();
 
             // Verifica se os ComboBoxes têm valores selecionados
-            if (cmbDiasDisponiveis.SelectedItem != null &&
-                cmbHoraDisponivel.SelectedItem != null &&
+            if (cmbDiasDisponiveis.SelectedItem != null ||
+                cmbHoraDisponivel.SelectedItem != null ||
                 cmbTipoConsulta.SelectedItem != null)
             {
-                // Filtra os pacientes com base nos critérios de pesquisa
-                var resultadosFiltrados = Resultados.Where(p =>
-                    p.DiasDisponiveis.Contains(cmbDiasDisponiveis.SelectedItem.ToString()) &&
-                    (string.IsNullOrEmpty(p.HorasDisponíveis) || p.HorasDisponíveis.Contains(cmbHoraDisponivel.SelectedItem.ToString())) &&
-                    p.TipoConsulta == cmbTipoConsulta.SelectedItem.ToString()
-                );
+                    
+                Resultados.Clear();
 
-                // Adiciona os resultados filtrados à lista
-                foreach (var paciente in resultadosFiltrados)
-                {
-                    Resultados.Add(paciente);
-
-
-                }
+                //buscar resultados filtrados à DB, não esquecer "any day" e "any time". Por agora, mostra tudo
+                resultadosFiltrados = Resultados;
             }
-            listView.ItemsSource = Resultados;
 
+            listView.ItemsSource = resultadosFiltrados;
         }
-
-
-
     }
-
-
 }
 
 
