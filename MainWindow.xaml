@@ -1,32 +1,81 @@
-﻿<Window x:Class="DTCWaitingList.MainWindow"
+﻿<Window x:Class="DTCWaitingList.PacientesEmListaDeEspera"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DTCWaitingList"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Pacientes em Lista de Espera" Height="450" Width="800">
     <Grid>
-        <StackPanel Margin="20">
-            <TextBlock Text="Nome:" FontWeight="Bold"/>
-            <TextBox x:Name="txtNome" Margin="0,5,0,10"/>
+        <TabControl Name="tabControl">
+            <!-- Primeira aba - Resultados da base de dados -->
+            <TabItem Header="Resultados">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Filtro e Títulos -->
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <!-- Aqui você pode adicionar controles para filtrar e reordenar -->
+                    </StackPanel>
+                    <ListView Grid.Row="1" x:Name="listView" ItemsSource="{Binding Resultados}">
+                        <ListView.View>
+                            <GridView>
+                                <!-- Definindo as colunas da tabela -->
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding Nome}"/>
+                                <GridViewColumn Header="Apelido" DisplayMemberBinding="{Binding Apelido}"/>
+                                <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}"/>
+                                <GridViewColumn Header="Telefone" DisplayMemberBinding="{Binding Telefone}"/>
+                                <GridViewColumn Header="Dias Disponíveis" DisplayMemberBinding="{Binding DiasDisponiveis}"/>
+                                <GridViewColumn Header="Horas Disponíveis" DisplayMemberBinding="{Binding HorasDisponíveis}"/>
+                                <GridViewColumn Header="Tipo de Consulta" DisplayMemberBinding="{Binding TipoConsulta}"/>
+                                <GridViewColumn Header="Novo Paciente" DisplayMemberBinding="{Binding NovoPaciente}"/>
+                                <GridViewColumn Header="Data de Entrada na Fila de Espera" DisplayMemberBinding="{Binding DataEntradaFilaEspera}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
 
-            <TextBlock Text="Sobrenome:" FontWeight="Bold"/>
-            <TextBox x:Name="txtSobrenome" Margin="0,5,0,10"/>
+            <!-- Segunda aba - Pesquisa -->
+            <TabItem Header="Pesquisa">
+                <Grid>
+                    <StackPanel Margin="10">
+                        <!-- Campos de pesquisa -->
+                        <TextBlock Text="Dias Disponíveis" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
+                        <ComboBox x:Name="cmbDiasDisponiveis" Margin="0,0,0,10">
+                            <ComboBoxItem Content="Segunda-feira"/>
+                            <ComboBoxItem Content="Terça-feira"/>
+                            <ComboBoxItem Content="Quarta-feira"/>
+                            <ComboBoxItem Content="Quinta-feira"/>
+                            <ComboBoxItem Content="Sexta-feira"/>
+                        </ComboBox>
 
-            <TextBlock Text="Localização:" FontWeight="Bold"/>
-            <ComboBox x:Name="cmbLocalizacao" Margin="0,5,0,10">
-                <ComboBoxItem Content="Selecione..." IsEnabled="False"/>
-                <!-- Adicione aqui os itens da sua lista de localizações -->
-            </ComboBox>
+                        <TextBlock Text="Hora Disponível" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
+                        <ComboBox x:Name="cmbHoraDisponivel" Margin="0,0,0,10">
+                            <!-- Adicione aqui as opções de hora -->
+                            <ComboBoxItem Content="Manhã"/>
+                            <ComboBoxItem Content="Meio-dia"/>
+                            <ComboBoxItem Content="Tarde"/>
+                            <ComboBoxItem Content="Noite"/>
+                            <!-- Adicione mais opções de hora conforme necessário -->
+                        </ComboBox>
 
-            <TextBlock Text="Disponibilidade:" FontWeight="Bold"/>
-            <ComboBox x:Name="cmbDisponibilidade" Margin="0,5,0,10">
-                <ComboBoxItem Content="Selecione..." IsEnabled="False"/>
-                <!-- Adicione aqui os itens da sua lista de disponibilidade -->
-            </ComboBox>
+                        <TextBlock Text="Tipo de Consulta" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
+                        <ComboBox x:Name="cmbTipoConsulta" Margin="0,0,0,10">
+                            <ComboBoxItem Content="Checkup"/>
+                            <ComboBoxItem Content="Limpeza"/>
+                            <ComboBoxItem Content="Dor"/>
+                            <ComboBoxItem Content="Consulta"/>
+                            <ComboBoxItem Content="Extração"/>
+                        </ComboBox>
 
-            <Button Content="Salvar" Click="Salvar_Click" Width="100" HorizontalAlignment="Center"/>
-        </StackPanel>
+                        <!-- Botão de pesquisa -->
+                        <Button Content="Procurar"  Click="Procurar_Click" Margin="0,10,0,0" Background="#007ACC" Foreground="White" Padding="10" FontWeight="Bold" BorderThickness="0"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
