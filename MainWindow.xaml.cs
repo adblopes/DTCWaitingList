@@ -89,7 +89,7 @@ namespace DTCWaitingList
                 cmbHoraDisponivel.SelectedItem != null ||
                 cmbTipoConsulta.SelectedItem != null)
             {
-                Resultados.Clear();
+                //Resultados.Clear();
                 //buscar resultados filtrados à DB, não esquecer "any day" e "any time". Por agora, mostra tudo
                 
                 resultadosFiltrados = Resultados;
