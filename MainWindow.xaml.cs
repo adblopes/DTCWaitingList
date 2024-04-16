@@ -82,16 +82,16 @@ namespace DTCWaitingList
         private void Procurar_Click(object sender, RoutedEventArgs e)
         {
             var resultadosFiltrados = new ObservableCollection<Paciente>();
+            resultadosFiltrados = Resultados;
 
             // Verifica se os ComboBoxes têm valores selecionados
             if (cmbDiasDisponiveis.SelectedItem != null ||
                 cmbHoraDisponivel.SelectedItem != null ||
                 cmbTipoConsulta.SelectedItem != null)
             {
-                    
                 Resultados.Clear();
-
                 //buscar resultados filtrados à DB, não esquecer "any day" e "any time". Por agora, mostra tudo
+                
                 resultadosFiltrados = Resultados;
             }
 
