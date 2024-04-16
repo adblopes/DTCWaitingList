@@ -6,14 +6,34 @@
         xmlns:local="clr-namespace:DTCWaitingList"
         mc:Ignorable="d"
         Title="Pacientes em Lista de Espera" Height="450" Width="800">
-
-
-
+    <Window.Resources>
+        <Style x:Key="SmallButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="2"/>
+                            <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#005A9E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
-
-
-
-
         <TabControl Name="tabControl">
             <!-- Primeira aba - Resultados da base de dados -->
             <TabItem Header="Resultados">
@@ -30,21 +50,110 @@
                         <ListView.View>
                             <GridView>
                                 <!-- Definindo as colunas da tabela -->
-                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding Nome}"/>
-                                <GridViewColumn Header="Apelido" DisplayMemberBinding="{Binding Apelido}"/>
-                                <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}"/>
-                                <GridViewColumn Header="Telefone" DisplayMemberBinding="{Binding Telefone}"/>
-                                <GridViewColumn Header="Dias Disponíveis" DisplayMemberBinding="{Binding DiasDisponiveis}"/>
-                                <GridViewColumn Header="Horas Disponíveis" DisplayMemberBinding="{Binding HorasDisponíveis}"/>
-                                <GridViewColumn Header="Tipo de Consulta" DisplayMemberBinding="{Binding TipoConsulta}"/>
-                                <GridViewColumn Header="Novo Paciente" DisplayMemberBinding="{Binding NovoPaciente}"/>
-                                <GridViewColumn Header="Data de Entrada na Fila de Espera" DisplayMemberBinding="{Binding DataEntradaFilaEspera}"/>
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding Nome}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Nome"/>
+                                                <Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Apelido" DisplayMemberBinding="{Binding Apelido}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Apelido"/>
+                                                <Button Content="▲" Click="OrdenarApelidoAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarApelidoDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding Email}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Email"/>
+                                                <Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding Telefone}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Telefone"/>
+                                                <Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding DiasDisponiveis}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Dias Disponíveis"/>
+                                                <Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding HorasDisponíveis}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Horas Disponiveis"/>
+                                                <Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding TipoConsulta}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Tipo de Consulta"/>
+                                                <Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding NovoPaciente}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Novo Paciente"/>
+                                                <Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding DataEntradaFilaEspera}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Data de entrada na fila de Espera"/>
+                                                <Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
                                 <!-- Botão de remoção -->
                                 <GridViewColumn Header="Remover">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Remover" Style="{StaticResource BotaoRemover}" Click="RemoverPaciente_Click"/>
-
+                                            <Button Content="Remover" Click="RemoverPaciente_Click"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -94,6 +203,4 @@
             </TabItem>
         </TabControl>
     </Grid>
-
-
 </Window>

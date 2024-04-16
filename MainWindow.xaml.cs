@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using static DTCWaitingList.PacientesEmListaDeEspera;
+using System.Windows.Data;
 
 namespace DTCWaitingList
 {
     public partial class PacientesEmListaDeEspera : Window
     {
-        // Definindo uma classe para representar uma entrada de paciente
         public class Paciente
         {
             public string Nome { get; set; }
@@ -23,27 +22,19 @@ namespace DTCWaitingList
             public DateTime DataEntradaFilaEspera { get; set; }
         }
 
-        // Lista de pacientes para armazenar os mocks
         public ObservableCollection<Paciente> Resultados { get; set; }
 
         public PacientesEmListaDeEspera()
         {
             InitializeComponent();
             Resultados = new ObservableCollection<Paciente>();
-            // Define o contexto de dados para a ListView
             MockResultados();
             listView.ItemsSource = Resultados;
-
             DataContext = this;
         }
 
-        // Método para adicionar mocks à lista de resultados
-
-
-
         private void MockResultados()
         {
-            // Adiciona 3 entradas de exemplo
             Resultados.Add(new Paciente
             {
                 Nome = "João",
@@ -80,44 +71,56 @@ namespace DTCWaitingList
             });
         }
 
-        private void Procurar_Click(object sender, RoutedEventArgs e)
+        private void OrdenarNomeAscendente_Click(object sender, RoutedEventArgs e)
         {
-            var resultadosFiltrados = new ObservableCollection<Paciente>();
-            resultadosFiltrados = Resultados;
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("Nome", ListSortDirection.Ascending));
+        }
 
-            // Verifica se os ComboBoxes têm valores selecionados
-            if (cmbDiasDisponiveis.SelectedItem != null ||
-                cmbHoraDisponivel.SelectedItem != null ||
-                cmbTipoConsulta.SelectedItem != null)
-            {
-                // Resultados.Clear();
-                //buscar resultados filtrados à DB, não esquecer "any day" e "any time". Por agora, mostra tudo
+        private void OrdenarNomeDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("Nome", ListSortDirection.Descending));
+        }
 
-                resultadosFiltrados = Resultados;
-            }
+        private void OrdenarApelidoAscendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("Apelido", ListSortDirection.Ascending));
+        }
 
-            listView.ItemsSource = resultadosFiltrados;
+        private void OrdenarApelidoDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("Apelido", ListSortDirection.Descending));
         }
 
         private void RemoverPaciente_Click(object sender, RoutedEventArgs e)
         {
-            // Obtemos o botão que foi clicado
             Button button = sender as Button;
-            // Obtemos o paciente associado à linha onde o botão foi clicado
             Paciente paciente = button.DataContext as Paciente;
-
-            // Exibimos o popup de confirmação
             MessageBoxResult result = MessageBox.Show($"Tem certeza que deseja remover {paciente.Nome} {paciente.Apelido} da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            // Se o usuário confirmar a remoção, removemos o paciente da lista
             if (result == MessageBoxResult.Yes)
             {
                 Resultados.Remove(paciente);
             }
         }
 
-
+        private void Procurar_Click(object sender, RoutedEventArgs e)
+        {
+            var resultadosFiltrados = new ObservableCollection<Paciente>();
+            resultadosFiltrados = Resultados;
+            if (cmbDiasDisponiveis.SelectedItem != null ||
+                cmbHoraDisponivel.SelectedItem != null ||
+                cmbTipoConsulta.SelectedItem != null)
+            {
+                resultadosFiltrados = Resultados;
+            }
+            listView.ItemsSource = resultadosFiltrados;
+        }
     }
-
-
 }
