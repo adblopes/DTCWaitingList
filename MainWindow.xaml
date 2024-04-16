@@ -6,7 +6,14 @@
         xmlns:local="clr-namespace:DTCWaitingList"
         mc:Ignorable="d"
         Title="Pacientes em Lista de Espera" Height="450" Width="800">
+
+
+
     <Grid>
+
+
+
+
         <TabControl Name="tabControl">
             <!-- Primeira aba - Resultados da base de dados -->
             <TabItem Header="Resultados">
@@ -32,6 +39,15 @@
                                 <GridViewColumn Header="Tipo de Consulta" DisplayMemberBinding="{Binding TipoConsulta}"/>
                                 <GridViewColumn Header="Novo Paciente" DisplayMemberBinding="{Binding NovoPaciente}"/>
                                 <GridViewColumn Header="Data de Entrada na Fila de Espera" DisplayMemberBinding="{Binding DataEntradaFilaEspera}"/>
+                                <!-- Botão de remoção -->
+                                <GridViewColumn Header="Remover">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Remover" Style="{StaticResource BotaoRemover}" Click="RemoverPaciente_Click"/>
+
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -78,4 +94,6 @@
             </TabItem>
         </TabControl>
     </Grid>
+
+
 </Window>

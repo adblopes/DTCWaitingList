@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using static DTCWaitingList.PacientesEmListaDeEspera;
 
 namespace DTCWaitingList
@@ -89,17 +90,34 @@ namespace DTCWaitingList
                 cmbHoraDisponivel.SelectedItem != null ||
                 cmbTipoConsulta.SelectedItem != null)
             {
-                Resultados.Clear();
+                // Resultados.Clear();
                 //buscar resultados filtrados à DB, não esquecer "any day" e "any time". Por agora, mostra tudo
-                
+
                 resultadosFiltrados = Resultados;
             }
 
             listView.ItemsSource = resultadosFiltrados;
         }
+
+        private void RemoverPaciente_Click(object sender, RoutedEventArgs e)
+        {
+            // Obtemos o botão que foi clicado
+            Button button = sender as Button;
+            // Obtemos o paciente associado à linha onde o botão foi clicado
+            Paciente paciente = button.DataContext as Paciente;
+
+            // Exibimos o popup de confirmação
+            MessageBoxResult result = MessageBox.Show($"Tem certeza que deseja remover {paciente.Nome} {paciente.Apelido} da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            // Se o usuário confirmar a remoção, removemos o paciente da lista
+            if (result == MessageBoxResult.Yes)
+            {
+                Resultados.Remove(paciente);
+            }
+        }
+
+
     }
+
+
 }
-
-
-
-

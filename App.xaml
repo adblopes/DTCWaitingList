@@ -4,6 +4,18 @@
              xmlns:local="clr-namespace:DTCWaitingList"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
+        
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <!-- Referencie o arquivo de recursos aqui -->
+                    <ResourceDictionary Source="ResourceDictionary.xaml"/>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        
+
+
+
+
     </Application.Resources>
 </Application>
