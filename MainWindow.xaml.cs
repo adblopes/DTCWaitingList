@@ -122,5 +122,151 @@ namespace DTCWaitingList
             }
             listView.ItemsSource = resultadosFiltrados;
         }
+
+        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void AdicionarPaciente_Click(object sender, RoutedEventArgs e)
+        {
+            Paciente novoPaciente = new Paciente
+            {
+                Nome = txtNome.Text,
+                Apelido = txtApelido.Text,
+                Email = txtEmail.Text,
+                Telefone = txtTelefone.Text,
+                DiasDisponiveis = cmbDiasDisponiveis.SelectedItem.ToString(),
+                HorasDisponíveis = cmbHorasDisponiveis.SelectedItem.ToString(),
+                TipoConsulta = cmbTipoConsulta.SelectedItem.ToString(),
+                NovoPaciente = chkNovoPaciente.IsChecked ?? false,
+                DataEntradaFilaEspera = DateTime.Now
+            };
+
+            Resultados.Add(novoPaciente);
+
+            // Limpar os campos após adicionar o paciente
+            LimparCamposAdicaoPaciente();
+        }
+
+        private void LimparCamposAdicaoPaciente()
+        {
+            txtNome.Text = "";
+            txtApelido.Text = "";
+            txtEmail.Text = "";
+            txtTelefone.Text = "";
+            cmbDiasDisponiveis.SelectedIndex = -1;
+            cmbHorasDisponiveis.SelectedIndex = -1;
+            cmbTipoConsulta.SelectedIndex = -1;
+            chkNovoPaciente.IsChecked = false;
+        }
+
+        private void OrdenarEmailAscendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("Email", ListSortDirection.Ascending));
+        }
+
+
+        private void OrdenarEmailDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("Email", ListSortDirection.Descending));
+        }
+
+        private void OrdenarTelefoneAscendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("Telefone", ListSortDirection.Ascending));
+        }
+
+        private void OrdenarTelefoneDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("Telefone", ListSortDirection.Descending));
+        }
+
+
+        private void OrdenarDiasDisponiveisAscendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("DiasDisponiveis", ListSortDirection.Ascending));
+        }
+
+        private void OrdenarDiasDisponiveisDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("DiasDisponiveis", ListSortDirection.Descending));
+        }
+
+
+        private void OrdenarHorasDisponiveisAscendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("HorasDisponíveis", ListSortDirection.Ascending));
+        }
+
+
+        private void OrdenarHorasDisponiveisDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("HorasDisponíveis", ListSortDirection.Descending));
+        }
+
+        private void OrdenarTipoConsultaAscendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("TipoConsulta", ListSortDirection.Ascending));
+        }
+
+
+        private void OrdenarTipoConsultaDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("TipoConsulta", ListSortDirection.Descending));
+        }
+
+        private void OrdenarDataEntradaFilaEsperaDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("DataEntradaFilaEspera", ListSortDirection.Descending));
+        }
+
+        private void OrdenarNovoPacienteDescendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("NovoPaciente", ListSortDirection.Descending));
+        }
+
+
+        private void OrdenarNovoPacienteAscendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("NovoPaciente", ListSortDirection.Ascending));
+        }
+
+        private void OrdenarDataEntradaFilaEsperaAscendente_Click(object sender, RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
+            view.SortDescriptions.Clear();
+            view.SortDescriptions.Add(new SortDescription("DataEntradaFilaEspera", ListSortDirection.Ascending));
+        }
+
+
+
+
     }
 }
