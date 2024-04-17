@@ -17,16 +17,14 @@ namespace DTCWaitingList.Services
         const string clientSecret = "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";
         const string hostEmail = "adlopesrepo@gmail.com";
 
-        private readonly AppointmentsDbContext _dbContext;
+        private readonly IDataAccessService _data;
+        public GmailService _service { get; set; }
 
-        public GmailService Service { get; set; }
-
-        public EmailService(AppointmentsDbContext dbContext, GmailService service)
+        public EmailService(IDataAccessService data, GmailService service)
         {
-            _dbContext = dbContext;
-            Service = service;
+            _data = data;
+            _service = service;
         }
-
 
         public void SendEmail(string userEmail, string userName)
         {
@@ -46,7 +44,7 @@ namespace DTCWaitingList.Services
 
             var gmailMessage = new Message { Raw = rawMessage };
 
-            Service.Users.Messages.Send(gmailMessage, hostEmail).Execute();
+            _service.Users.Messages.Send(gmailMessage, hostEmail).Execute();
 
         }
 
@@ -54,7 +52,7 @@ namespace DTCWaitingList.Services
         {
             Appointment appointment = new Appointment();
 
-            Message message = Service.Users.Messages.Get(hostEmail, messageId).Execute();
+            Message message = _service.Users.Messages.Get(hostEmail, messageId).Execute();
 
             var data = Convert.FromBase64String(message.Payload.Parts[0].Body.Data);
 
@@ -64,17 +62,30 @@ namespace DTCWaitingList.Services
             appointment.Email = decodedMessage.Substring(decodedMessage.IndexOf("Email:"), decodedMessage.IndexOf("Phone:")).Trim();
             appointment.Phone = decodedMessage.Substring(decodedMessage.IndexOf("Phone:"), decodedMessage.IndexOf("Are you")).Trim();
             appointment.IsClient = decodedMessage.Substring(decodedMessage.IndexOf("Are you a current patient?"), decodedMessage.IndexOf("Preferred day(s) of the week for an appointment?")).Trim() == "Yes";
-            appointment.AvailableDays = decodedMessage.Substring(decodedMessage.IndexOf("Preferred day(s) of the week for an appointment?"), decodedMessage.IndexOf("Preferred time(s) for an appointment?")).Trim().Split("\n").ToList();
-            appointment.AvailableTimes = decodedMessage.Substring(decodedMessage.IndexOf("Preferred time(s) for an appointment?"), decodedMessage.IndexOf("Comment:")).Trim().Split("\n").ToList();
-            appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf("Comment:"), decodedMessage.IndexOf("SID:")).Trim();
-            appointment.Reasons = SearchReasons(appointment.FullReason);
+appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf("Comment:"), decodedMessage.IndexOf("SID:")).Trim();
+            
+            
+            if (SearchReasons(appointment.FullReason) != null)
+            {
+                appointment.ReasonId = SearchReasons(appointment.FullReason)!.Id;
+
+            }
+            else
+            {
+                appointment.ReasonId = _data.GetReasons()!.First().Id;
+            }
+
+            //create appointment and add days to patientDays with new appointmentId
+            //appointment.AvailableDays = decodedMessage.Substring(decodedMessage.IndexOf("Preferred day(s) of the week for an appointment?"), decodedMessage.IndexOf("Preferred time(s) for an appointment?")).Trim().Split("\n").ToList();
+            //appointment.AvailableTimes = decodedMessage.Substring(decodedMessage.IndexOf("Preferred time(s) for an appointment?"), decodedMessage.IndexOf("Comment:")).Trim().Split("\n").ToList();
+
 
             return appointment;
         }
 
         public void ProcessInboxUnread()
         {
-            Service = AuthenticateGmailService();
+            _service = AuthenticateGmailService();
 
             var messages = ListMessages(hostEmail, "subject:(ProSites Appointment Request Response) is:unread");
 
@@ -82,7 +93,7 @@ namespace DTCWaitingList.Services
             {
                 var appointment = ReadEmail(message.Id);
 
-                _dbContext.AddAppointment(appointment);
+                _data.AddAppointment(appointment);
 
                 SendEmail("adiogo.blopes@gmail.com", "test");  // <------ appointment.Email
 
@@ -90,16 +101,12 @@ namespace DTCWaitingList.Services
             }
         }
 
-        private void DeleteEmail(string messageId)
-        {
-            Service.Users.Messages.Delete(hostEmail, messageId).Execute();
-        }
 
         // List Gmail messages
         public List<Message> ListMessages(string userId, string query)
         {
             List<Message> result = new List<Message>();
-            UsersResource.MessagesResource.ListRequest request = Service.Users.Messages.List(userId);
+            UsersResource.MessagesResource.ListRequest request = _service.Users.Messages.List(userId);
             request.Q = query;
 
             do
@@ -155,22 +162,18 @@ namespace DTCWaitingList.Services
             }
         }
 
-        private List<Reason> SearchReasons(string input)
+        private void DeleteEmail(string messageId)
         {
-            var result = new List<Reason>();
-            var reasons = _dbContext.GetReasons();
+            _service.Users.Messages.Delete(hostEmail, messageId).Execute();
+        }
+
+        private Reason? SearchReasons(string input)
+        {
+            var reasons = _data.GetReasons();
 
             input = input.ToLower();
 
-            foreach (var reason in reasons)
-            {
-                string reasonStr = reason.ReasonName!.ToLower();
-
-                if (input.Contains(reasonStr))
-                {
-                    result.Add(reason);
-                }
-            }
+            Reason? result = reasons!.FirstOrDefault(r => input.Contains(r.ReasonName!.ToLower()));
 
             return result;
         }

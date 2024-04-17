@@ -5,9 +5,9 @@ namespace DTCWaitingList.Services
 {
     public class DataAccessService : IDataAccessService
     {
-        private readonly AppointmentsDbContext _dbContext;
+        private readonly WaitingListDb _dbContext;
 
-        public DataAccessService(AppointmentsDbContext dbContext)
+        public DataAccessService(WaitingListDb dbContext)
         {
             _dbContext = dbContext;
         }
@@ -17,20 +17,10 @@ namespace DTCWaitingList.Services
             _dbContext.AddAppointment(appointment);
         }
 
-        public List<Appointment> GetAppointments(string[] args)
+        public List<Appointment>? GetAppointments(string[]? args)
         {
             //parse search parameters
             return _dbContext.GetAppointments();
-        }
-
-        public List<Reason> GetReasons()
-        {
-            return _dbContext.GetReasons();
-        }
-
-        public List<ReasonVariant> GetReasonVariants()
-        {
-            return _dbContext.GetReasonVariants();
         }
 
         public void RemoveAppointment(int id)
@@ -39,6 +29,11 @@ namespace DTCWaitingList.Services
             {
                 _dbContext.RemoveAppointment(id);
             }
+        }
+
+        public List<Reason>? GetReasons()
+        {
+            return _dbContext.GetReasons();
         }
     }
 }
