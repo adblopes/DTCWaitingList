@@ -22,6 +22,7 @@ namespace DTCWaitingList
                 services.AddSingleton<IEmailService, EmailService>();
                 services.AddSingleton<IDataAccessService, DataAccessService>();
                 services.AddSingleton<GmailService>();
+                services.AddAutoMapper(typeof(App));
                 services.AddDbContext<WaitingListDb>(options =>
                     options.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=DTCWaitingList;Trusted_Connection=True;TrustServerCertificate=True"));
             })
@@ -34,15 +35,18 @@ namespace DTCWaitingList
             using IServiceScope serviceScope = host.CreateScope();
             IServiceProvider provider = serviceScope.ServiceProvider;
 
-            //var emailService = provider.GetService<IEmailService>();
+            var emailService = provider.GetService<IEmailService>();
 
             //run the inbox process method every 30min while the program is active
-            //Timer timer = new Timer(x => emailService!.ProcessInboxUnread(), null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
+            emailService!.ProcessInboxUnread();
+
+            Timer timer = new Timer(x => emailService!.ProcessInboxUnread(), null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
 
             try
             {
-                //var dataAccessService = provider.GetService<IDataAccessService>();
-                //Application.Current.MainWindow = new MainWindow(dataAccessService!);
+                var dataAccessService = provider.GetService<IDataAccessService>();
+                Current.MainWindow = new MainWindow(dataAccessService!);
+                Current.MainWindow.Show();
             }
             catch
             {

@@ -1,5 +1,6 @@
 ﻿using DTCWaitingList.Interface;
 using DTCWaitingList.Models;
+using DTCWaitingList.Views;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,21 +11,14 @@ namespace DTCWaitingList
     public partial class MainWindow : Window
     {
         private readonly IDataAccessService? _data;
-        public IEnumerable<Appointment>? Results { get; set; }
-
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        public IEnumerable<AppointmentView>? Results { get; set; }
 
         public MainWindow(IDataAccessService data)
         {
             _data = data;
 
-            //Results = new ObservableCollection<Appointment>();
-
-            Results =_data.GetAppointments(null);
-
+            InitializeComponent();
+            Results = _data.GetAppointments(null);
             listView.ItemsSource = Results;
         }
 
@@ -75,13 +69,13 @@ namespace DTCWaitingList
 
         private void Procurar_Click(object sender, RoutedEventArgs e)
         {
-            var resultadosFiltrados = new List<Appointment>();
-            resultadosFiltrados = (List<Appointment>)Results;
+            var resultadosFiltrados = new List<AppointmentView>();
+            resultadosFiltrados = (List<AppointmentView>)Results;
             if (cmbDiasDisponiveis.SelectedItem != null ||
                 cmbHoraDisponivel.SelectedItem != null ||
                 cmbTipoConsulta.SelectedItem != null)
             {
-                resultadosFiltrados = (List<Appointment>)Results;
+                resultadosFiltrados = (List<AppointmentView>)Results;
             }
             listView.ItemsSource = resultadosFiltrados;
         }
@@ -93,7 +87,7 @@ namespace DTCWaitingList
 
         private void AdicionarPaciente_Click(object sender, RoutedEventArgs e)
         {
-            Appointment novoPaciente = new Appointment
+            AppointmentView novoPaciente = new AppointmentView
             {
                 //Nome = txtNome.Text,
                 //Apelido = txtApelido.Text,

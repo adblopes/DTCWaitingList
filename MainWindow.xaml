@@ -170,7 +170,7 @@
                                 <GridViewColumn Header="Remover">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Remover" Click="RemoverPaciente_Click" Style="{StaticResource ResourceKey=BotaoRemover}"/>
+                                            <!--<Button Content="Remover" Click="RemoverPaciente_Click" Style="{StaticResource ResourceKey=BotaoRemover}"/>-->
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

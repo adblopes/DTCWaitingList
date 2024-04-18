@@ -1,14 +1,15 @@
 ﻿using DTCWaitingList.Models;
+using DTCWaitingList.Views;
 
 namespace DTCWaitingList.Interface
 {
     public interface IDataAccessService
     {
-        public List<Appointment>? GetAppointments(string[]? args);
+        public List<AppointmentView> GetAppointments(string[]? args);
 
         public void RemoveAppointment(int id);
 
-        public void AddAppointment(Appointment appointment);
+        public Task AddAppointment(AppointmentView appointment);
 
         public List<Reason>? GetReasons();
     }

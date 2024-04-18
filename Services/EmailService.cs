@@ -6,7 +6,9 @@ using System.Text;
 using MimeKit;
 using System.IO;
 using DTCWaitingList.Interface;
+using DTCWaitingList.Views;
 using DTCWaitingList.Models;
+using Google.Apis.Util;
 
 namespace DTCWaitingList.Services
 {
@@ -48,42 +50,50 @@ namespace DTCWaitingList.Services
 
         }
 
-        public Appointment ReadEmail(string messageId)
+        public AppointmentView ReadEmail(string messageId)
         {
-            Appointment appointment = new Appointment();
+            AppointmentView appointment = new();
 
-            Message message = _service.Users.Messages.Get(hostEmail, messageId).Execute();
-
-            var data = Convert.FromBase64String(message.Payload.Parts[0].Body.Data);
-
-            var decodedMessage = Encoding.UTF8.GetString(data);
-
-            appointment.FullName = decodedMessage.Substring(decodedMessage.IndexOf("Name:"), decodedMessage.IndexOf("Email:")).Trim();
-            appointment.Email = decodedMessage.Substring(decodedMessage.IndexOf("Email:"), decodedMessage.IndexOf("Phone:")).Trim();
-            appointment.Phone = decodedMessage.Substring(decodedMessage.IndexOf("Phone:"), decodedMessage.IndexOf("Are you")).Trim();
-            appointment.IsClient = decodedMessage.Substring(decodedMessage.IndexOf("Are you a current patient?"), decodedMessage.IndexOf("Preferred day(s) of the week for an appointment?")).Trim() == "Yes";
-appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf("Comment:"), decodedMessage.IndexOf("SID:")).Trim();
-            
-            
-            if (SearchReasons(appointment.FullReason) != null)
+            try
             {
-                appointment.ReasonId = SearchReasons(appointment.FullReason)!.Id;
+                Message message = _service.Users.Messages.Get(hostEmail, messageId).Execute();
 
+                var data = Convert.FromBase64String(message.Payload.Parts[0].Body.Data);
+
+                var decodedMessage = Encoding.UTF8.GetString(data);
+
+                var emailParams = new
+                {
+                    Name = "Name:",
+                    Email = "Email:",
+                    Phone = "Phone:",
+                    Current = "Are you a current patient?",
+                    Comment = "Comment:",
+                    Days = "Preferred day(s) of the week for an appointment?",
+                    Times = "Preferred time(s) for an appointment?",
+                };
+
+                appointment.FullName = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Name) + emailParams.Name.Length, decodedMessage.IndexOf(emailParams.Email) - decodedMessage.IndexOf(emailParams.Name) - emailParams.Name.Length).Trim();
+                appointment.Email = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Email) + emailParams.Email.Length, decodedMessage.IndexOf(emailParams.Phone) - decodedMessage.IndexOf(emailParams.Email) - emailParams.Email.Length).Trim();
+                appointment.Phone = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Phone) + emailParams.Phone.Length, decodedMessage.IndexOf("Are you") - decodedMessage.IndexOf(emailParams.Phone) - emailParams.Phone.Length).Trim();
+                appointment.IsClient = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Current) + emailParams.Current.Length, decodedMessage.IndexOf(emailParams.Days) - decodedMessage.IndexOf(emailParams.Current) - emailParams.Current.Length).Trim() == "Yes";
+                appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Comment) + emailParams.Comment.Length, decodedMessage.IndexOf("SID:") - decodedMessage.IndexOf(emailParams.Comment) - emailParams.Comment.Length).Trim();
+                appointment.AvailableDays = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Days) + emailParams.Days.Length, decodedMessage.IndexOf(emailParams.Times) - decodedMessage.IndexOf(emailParams.Days) - emailParams.Days.Length).Trim().Replace("\r", "").Split("\n");
+                appointment.AvailableTimes = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Times) + emailParams.Times.Length, decodedMessage.IndexOf(emailParams.Comment) - decodedMessage.IndexOf(emailParams.Times) - emailParams.Times.Length).Trim().Replace("\r", "").Split("\n");
+
+                var gmailDate = message.InternalDate ?? DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                appointment.CreatedDate = DateTimeOffset.FromUnixTimeMilliseconds(gmailDate).DateTime;
+
+                return appointment;
             }
-            else
+            catch (Exception ex)
             {
-                appointment.ReasonId = _data.GetReasons()!.First().Id;
+                throw new Exception($"Couldn't read email message, please call support. Error: {ex.Message}");
             }
 
-            //create appointment and add days to patientDays with new appointmentId
-            //appointment.AvailableDays = decodedMessage.Substring(decodedMessage.IndexOf("Preferred day(s) of the week for an appointment?"), decodedMessage.IndexOf("Preferred time(s) for an appointment?")).Trim().Split("\n").ToList();
-            //appointment.AvailableTimes = decodedMessage.Substring(decodedMessage.IndexOf("Preferred time(s) for an appointment?"), decodedMessage.IndexOf("Comment:")).Trim().Split("\n").ToList();
-
-
-            return appointment;
         }
 
-        public void ProcessInboxUnread()
+        public async Task ProcessInboxUnread()
         {
             _service = AuthenticateGmailService();
 
@@ -93,7 +103,7 @@ appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf("Commen
             {
                 var appointment = ReadEmail(message.Id);
 
-                _data.AddAppointment(appointment);
+                await _data.AddAppointment(appointment);
 
                 SendEmail("adiogo.blopes@gmail.com", "test");  // <------ appointment.Email
 
@@ -162,20 +172,14 @@ appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf("Commen
             }
         }
 
+        //private DateTime ParseDate(string emailDate)
+        //{
+        //    return DateTime.Now;
+        //}
+
         private void DeleteEmail(string messageId)
         {
             _service.Users.Messages.Delete(hostEmail, messageId).Execute();
-        }
-
-        private Reason? SearchReasons(string input)
-        {
-            var reasons = _data.GetReasons();
-
-            input = input.ToLower();
-
-            Reason? result = reasons!.FirstOrDefault(r => input.Contains(r.ReasonName!.ToLower()));
-
-            return result;
         }
     }
 }
