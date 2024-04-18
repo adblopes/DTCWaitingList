@@ -16,9 +16,18 @@ namespace DTCWaitingList
         public MainWindow(IDataAccessService data)
         {
             _data = data;
+            InitializeMainWindow();
+        }
 
+        private async void InitializeMainWindow()
+        {
+            await SetResultsAsync();
             InitializeComponent();
-            Results = _data.GetAppointments(null);
+        }
+
+        private async Task SetResultsAsync()
+        {
+            Results = await _data!.GetAppointmentsAsync(null);
             listView.ItemsSource = Results;
         }
 

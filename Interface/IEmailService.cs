@@ -5,11 +5,11 @@ namespace DTCWaitingList.Interface
 {
     public interface IEmailService
     {
-        void SendEmail(string userEmail, string userName);
+        Task SendEmailAsync(string userEmail, string userName);
 
         AppointmentView ReadEmail(string messageId);
 
-        Task ProcessInboxUnread();
+        Task ProcessInboxUnreadAsync();
 
         List<Message> ListMessages(string userId, string query);
     }

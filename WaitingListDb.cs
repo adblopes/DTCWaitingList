@@ -9,6 +9,7 @@ namespace DTCWaitingList
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Appointment> AppointmentsHistory { get; set; }
         public DbSet<Reason> Reasons { get; set; }
+        public DbSet<ReasonVariant> ReasonVariants { get; set; }
         public DbSet<Weekday> Weekdays { get; set; }
         public DbSet<Time> Times { get; set; }
         public DbSet<PatientDay> PatientDays { get; set; }
@@ -21,77 +22,81 @@ namespace DTCWaitingList
 
         public async Task<int> AddAppointmentAsync(Appointment appointment)
         {
-            try
-            {
-                await Appointments.AddAsync(appointment);
-                await SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await Appointments.AddAsync(appointment);
+            await SaveChangesAsync();
 
             return (int)appointment.Id!;
         }
 
-        public void RemoveAppointment(int appointmentId)
+        public async Task RemoveAppointmentAsync(int appointmentId)
         {
-            var appointment = GetAppointmentById(appointmentId);
+            var appointment = await GetAppointmentByIdAsync(appointmentId);
             
             if (appointment != null)
             {
                 Appointments.Remove(appointment);
-                AppointmentsHistory.Add(appointment);
-                SaveChanges();
+                await AppointmentsHistory.AddAsync(appointment);
+                await SaveChangesAsync();
             }
         }
 
-        public Appointment GetAppointmentById(int appointmentId)
+        public async Task<Appointment?> GetAppointmentByIdAsync(int appointmentId)
         {
-            return Appointments.FirstOrDefault(e => e.Id == appointmentId)!;
+            var appointment = await Appointments.FirstOrDefaultAsync(e => e.Id == appointmentId);
+
+            return appointment;
         }
 
-        public List<Appointment> GetAppointments()
+        public async Task<List<Appointment>> GetAppointmentsAsync()
         {
-            return [.. Appointments];
+            return await Appointments.ToListAsync();
         }
 
-        public List<Reason> GetReasons()
+        public async Task<List<Reason>> GetReasonsAsync()
         {
-            return [..Reasons];
+            return await Reasons.ToListAsync();
+        }
+        
+        public async Task<List<ReasonVariant>> GetReasonVariantsAsync()
+        {
+            return await ReasonVariants.ToListAsync();
         }
 
-        public List<Weekday> GetWeekdays()
+        public async Task<List<Weekday>> GetWeekdaysAsync()
         {
-            return [..Weekdays];
+            return await Weekdays.ToListAsync();
         }
 
-        public List<Time> GetTimes()
+        public async Task<List<Time>> GetTimesAsync()
         {
-            return [..Times];
+            return await Times.ToListAsync();
         }
 
-        public async Task AddPatientDay(int appointmentId, string day)
+        public async Task AddPatientDayAsync(int appointmentId, string day)
         {
+            var days = await GetWeekdaysAsync();
+
             PatientDay pd = new()
             {
                 PatientId = appointmentId,
-                DayId = GetWeekdays().Find(d => d.NameOfDay == day)!.Id,
+                DayId = days.Find(d => d.NameOfDay == day)!.Id,
             };
 
             await PatientDays.AddAsync(pd);
             await SaveChangesAsync();
         }
         
-        public async Task AddPatientTime(int appointmentId, string time)
+        public async Task AddPatientTimeAsync(int appointmentId, string time)
         {
-            PatientDay pt = new()
+            var times = await GetTimesAsync();
+
+            PatientTime pt = new()
             {
                 PatientId = appointmentId,
-                DayId = GetTimes().Find(d => d.TimeOfDay == time)!.Id,
+                TimeId = times.Find(d => d.TimeOfDay == time)!.Id,
             };
 
-            await PatientDays.AddAsync(pt);
+            await PatientTimes.AddAsync(pt);
             await SaveChangesAsync();
         }
 
@@ -99,7 +104,7 @@ namespace DTCWaitingList
         // Generic method to search for appointments based on any column or combination of columns
         public List<Appointment>? SearchAppointments<T>(Expression<Func<Appointment, bool>> predicate) where T : class, new()
         {
-            var list = GetAppointments();
+            var list = GetAppointmentsAsync();
 
             //if (list != null)
             //{

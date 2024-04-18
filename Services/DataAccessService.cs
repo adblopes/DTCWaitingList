@@ -17,7 +17,7 @@ namespace DTCWaitingList.Services
             _mapper = mapper;
         }
 
-        public async Task AddAppointment(AppointmentView appointmentView)
+        public async Task AddAppointmentAsync(AppointmentView appointmentView)
         {
 
             var appointment = new Appointment
@@ -30,17 +30,17 @@ namespace DTCWaitingList.Services
                 CreatedDate = appointmentView.CreatedDate ?? DateTime.Now,
             };
 
-            appointment.ReasonId = ProcessReason(appointment.FullReason);
+            appointment.ReasonId = await ProcessReasonAsync(appointment.FullReason);
 
             var appointmentId = await _dbContext.AddAppointmentAsync(appointment);
 
-            await AddAvailability(appointmentView, appointmentId);
+            await AddAvailabilityAsync(appointmentView, appointmentId);
         }
 
-        public List<AppointmentView> GetAppointments(string[]? args)
+        public async Task<List<AppointmentView>> GetAppointmentsAsync(string[]? args)
         {
             //parse search parameters
-            var appointments = _dbContext.GetAppointments();
+            var appointments = await _dbContext.GetAppointmentsAsync();
             var result = new List<AppointmentView>();
 
             foreach (Appointment appointment in appointments)
@@ -51,31 +51,38 @@ namespace DTCWaitingList.Services
             return result;
         }
 
-        public void RemoveAppointment(int id)
+        public async Task RemoveAppointmentAsync(int id)
         {
-            if (_dbContext.GetAppointmentById(id) != null)
+            var appointment = await _dbContext.GetAppointmentByIdAsync(id);
+            if (appointment != null)
             {
-                _dbContext.RemoveAppointment(id);
+                await _dbContext.RemoveAppointmentAsync(id);
             }
         }
 
-        public List<Reason> GetReasons()
+        public async Task<List<Reason>> GetReasonsAsync()
         {
-            return _dbContext.GetReasons();
+            return await _dbContext.GetReasonsAsync();
+        }
+        
+        public async Task<List<ReasonVariant>> GetReasonVariantsAsync()
+        {
+            return await _dbContext.GetReasonVariantsAsync();
         }
 
-        private int ProcessReason(string? fullReason)
+        private async Task<int> ProcessReasonAsync(string? fullReason)
         {
-            var reasons = GetReasons();
+            var reasons = await GetReasonsAsync();
+            var variants = await GetReasonVariantsAsync();
             int result = reasons.First().Id;
 
             if (!fullReason.IsNullOrEmpty())
             {
-                var data = reasons.FirstOrDefault(r => fullReason!.Contains(r.ReasonName!, StringComparison.CurrentCultureIgnoreCase));
+                var data = variants.FirstOrDefault(r => fullReason!.Contains(r.Term!, StringComparison.CurrentCultureIgnoreCase));
 
                 if (data != null)
-                {
-                    result = data.Id;
+                {        
+                    result = reasons.Find(r => r.Id == data.ReasonId)!.Id;
                 }
             
             }
@@ -83,7 +90,7 @@ namespace DTCWaitingList.Services
             return result;
         }
 
-        private async Task AddAvailability(AppointmentView appointmentView, int appointmentId)
+        private async Task AddAvailabilityAsync(AppointmentView appointmentView, int appointmentId)
         {
             if (appointmentView.AvailableDays == null)
             {
@@ -95,17 +102,14 @@ namespace DTCWaitingList.Services
 
             }
 
-            var days = _dbContext.GetWeekdays();
-            var times = _dbContext.GetTimes();
-
             foreach (string day in appointmentView.AvailableDays!)
             {
-                await _dbContext.AddPatientDay(appointmentId, day); 
+                await _dbContext.AddPatientDayAsync(appointmentId, day); 
             }
 
             foreach (string time in appointmentView.AvailableTimes!)
             {
-                await _dbContext.AddPatientTime(appointmentId, time); 
+                await _dbContext.AddPatientTimeAsync(appointmentId, time); 
             }
         }
     }

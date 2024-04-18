@@ -13,44 +13,56 @@ namespace DTCWaitingList
     /// </summary>
     public partial class App : Application
     {
-
         public App()
+        {
+            InitializeAppAsync();
+        }
+
+        public async void InitializeAppAsync()
         {
             using IHost host = Host.CreateDefaultBuilder()
             .ConfigureServices(services =>
             {
                 services.AddSingleton<IEmailService, EmailService>();
-                services.AddSingleton<IDataAccessService, DataAccessService>();
                 services.AddSingleton<GmailService>();
                 services.AddAutoMapper(typeof(App));
+                services.AddScoped<IDataAccessService, DataAccessService>();
                 services.AddDbContext<WaitingListDb>(options =>
-                    options.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=DTCWaitingList;Trusted_Connection=True;TrustServerCertificate=True"));
+                    options.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=DTCWaitingList;Trusted_Connection=True;TrustServerCertificate=True"),
+                    ServiceLifetime.Scoped);
             })
             .Build();
 
-            Run(host.Services);
+            await RunAsync(host.Services);
         }
-        static void Run(IServiceProvider host)
+
+        static async Task RunAsync(IServiceProvider host)
         {
-            using IServiceScope serviceScope = host.CreateScope();
-            IServiceProvider provider = serviceScope.ServiceProvider;
-
-            var emailService = provider.GetService<IEmailService>();
-
-            //run the inbox process method every 30min while the program is active
-            emailService!.ProcessInboxUnread();
-
-            Timer timer = new Timer(x => emailService!.ProcessInboxUnread(), null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
-
-            try
+            using (IServiceScope serviceScope = host.CreateScope())
             {
+                IServiceProvider provider = serviceScope.ServiceProvider;
+
                 var dataAccessService = provider.GetService<IDataAccessService>();
-                Current.MainWindow = new MainWindow(dataAccessService!);
-                Current.MainWindow.Show();
-            }
-            catch
-            {
-                throw new Exception("Was not able to access database, please verify connection and/or credentials and try again.");
+                var emailService = provider.GetService<IEmailService>();
+
+                try
+                {
+                    await emailService!.ProcessInboxUnreadAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing inbox: {ex.Message}");
+                }
+
+                try
+                {
+                    Current.MainWindow = new MainWindow(dataAccessService!);
+                    Current.MainWindow.Show();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error creating/showing main window: {ex.Message}");
+                }
             }
         }
     }

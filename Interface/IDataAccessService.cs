@@ -5,12 +5,12 @@ namespace DTCWaitingList.Interface
 {
     public interface IDataAccessService
     {
-        public List<AppointmentView> GetAppointments(string[]? args);
+        public Task<List<AppointmentView>> GetAppointmentsAsync(string[]? args);
 
-        public void RemoveAppointment(int id);
+        public Task RemoveAppointmentAsync(int id);
 
-        public Task AddAppointment(AppointmentView appointment);
+        public Task AddAppointmentAsync(AppointmentView appointment);
 
-        public List<Reason>? GetReasons();
+        public Task<List<Reason>>? GetReasonsAsync();
     }
 }

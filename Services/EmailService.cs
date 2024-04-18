@@ -7,8 +7,6 @@ using MimeKit;
 using System.IO;
 using DTCWaitingList.Interface;
 using DTCWaitingList.Views;
-using DTCWaitingList.Models;
-using Google.Apis.Util;
 
 namespace DTCWaitingList.Services
 {
@@ -20,6 +18,7 @@ namespace DTCWaitingList.Services
         const string hostEmail = "adlopesrepo@gmail.com";
 
         private readonly IDataAccessService _data;
+
         public GmailService _service { get; set; }
 
         public EmailService(IDataAccessService data, GmailService service)
@@ -28,7 +27,7 @@ namespace DTCWaitingList.Services
             _service = service;
         }
 
-        public void SendEmail(string userEmail, string userName)
+        public async Task SendEmailAsync(string userEmail, string userName)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("Dental Treatment Center", hostEmail));
@@ -46,8 +45,7 @@ namespace DTCWaitingList.Services
 
             var gmailMessage = new Message { Raw = rawMessage };
 
-            _service.Users.Messages.Send(gmailMessage, hostEmail).Execute();
-
+            await _service.Users.Messages.Send(gmailMessage, hostEmail).ExecuteAsync();
         }
 
         public AppointmentView ReadEmail(string messageId)
@@ -78,11 +76,15 @@ namespace DTCWaitingList.Services
                 appointment.Phone = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Phone) + emailParams.Phone.Length, decodedMessage.IndexOf("Are you") - decodedMessage.IndexOf(emailParams.Phone) - emailParams.Phone.Length).Trim();
                 appointment.IsClient = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Current) + emailParams.Current.Length, decodedMessage.IndexOf(emailParams.Days) - decodedMessage.IndexOf(emailParams.Current) - emailParams.Current.Length).Trim() == "Yes";
                 appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Comment) + emailParams.Comment.Length, decodedMessage.IndexOf("SID:") - decodedMessage.IndexOf(emailParams.Comment) - emailParams.Comment.Length).Trim();
-                appointment.AvailableDays = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Days) + emailParams.Days.Length, decodedMessage.IndexOf(emailParams.Times) - decodedMessage.IndexOf(emailParams.Days) - emailParams.Days.Length).Trim().Replace("\r", "").Split("\n");
-                appointment.AvailableTimes = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Times) + emailParams.Times.Length, decodedMessage.IndexOf(emailParams.Comment) - decodedMessage.IndexOf(emailParams.Times) - emailParams.Times.Length).Trim().Replace("\r", "").Split("\n");
+
+                var days = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Days) + emailParams.Days.Length, decodedMessage.IndexOf(emailParams.Times) - decodedMessage.IndexOf(emailParams.Days) - emailParams.Days.Length).Replace("\r\n", string.Empty).Trim();
+                var times = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Times) + emailParams.Times.Length, decodedMessage.IndexOf(emailParams.Comment) - decodedMessage.IndexOf(emailParams.Times) - emailParams.Times.Length).Replace("\r\n", string.Empty).Trim();
+
+                appointment.AvailableDays = days.Contains("Any Day") ? [days] : days.Split(" ");
+                appointment.AvailableTimes = times.Contains("Any Day") ? [times] : times.Split(" ");
 
                 var gmailDate = message.InternalDate ?? DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                appointment.CreatedDate = DateTimeOffset.FromUnixTimeMilliseconds(gmailDate).DateTime;
+                appointment.CreatedDate = DateTimeOffset.FromUnixTimeMilliseconds(gmailDate + (long)TimeSpan.FromMinutes(60).TotalMilliseconds).DateTime;
 
                 return appointment;
             }
@@ -90,10 +92,9 @@ namespace DTCWaitingList.Services
             {
                 throw new Exception($"Couldn't read email message, please call support. Error: {ex.Message}");
             }
-
         }
 
-        public async Task ProcessInboxUnread()
+        public async Task ProcessInboxUnreadAsync()
         {
             _service = AuthenticateGmailService();
 
@@ -103,11 +104,11 @@ namespace DTCWaitingList.Services
             {
                 var appointment = ReadEmail(message.Id);
 
-                await _data.AddAppointment(appointment);
+                await _data.AddAppointmentAsync(appointment);
 
-                SendEmail("adiogo.blopes@gmail.com", "test");  // <------ appointment.Email
+                await SendEmailAsync("adiogo.blopes@gmail.com", "test");  // <------ appointment.Email
 
-                DeleteEmail(message.Id);
+                await DeleteEmailAsync(message.Id);
             }
         }
 
@@ -172,14 +173,9 @@ namespace DTCWaitingList.Services
             }
         }
 
-        //private DateTime ParseDate(string emailDate)
-        //{
-        //    return DateTime.Now;
-        //}
-
-        private void DeleteEmail(string messageId)
+        private async Task DeleteEmailAsync(string messageId)
         {
-            _service.Users.Messages.Delete(hostEmail, messageId).Execute();
+            await _service.Users.Messages.Delete(hostEmail, messageId).ExecuteAsync();
         }
     }
 }
