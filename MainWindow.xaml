@@ -67,6 +67,7 @@
                         <ListView.View>
                             <GridView>
                                 <!-- Definindo as colunas da tabela -->
+								
                                 <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding Nome}">
                                     <GridViewColumn.HeaderTemplate>
                                         <DataTemplate>
