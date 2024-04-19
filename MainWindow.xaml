@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DTCWaitingList"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         Title="Pacientes em Lista de Espera" Height="500" Width="800">
     <Window.Resources>
@@ -161,8 +162,8 @@
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="Data de Entrada na Fila de Espera"/>
-                                                <Button Content="▲" Click="OrdenarDataEntradaFilaEsperaAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
-                                                <Button Content="▼" Click="OrdenarDataEntradaFilaEsperaDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <ui:Button Content="▲" Click="OrdenarDataEntradaFilaEsperaAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
+                                                <ui:Button Content="▼" Click="OrdenarDataEntradaFilaEsperaDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.HeaderTemplate>
@@ -171,7 +172,7 @@
                                 <GridViewColumn Header="Remover">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Remover" Click="RemoverPaciente_Click" Style="{StaticResource ResourceKey=BotaoRemover}"/>
+                                            <ui:Button Content="Remover" Click="RemoverPaciente_Click"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
