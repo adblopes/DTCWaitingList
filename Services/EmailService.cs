@@ -7,6 +7,8 @@ using MimeKit;
 using System.IO;
 using DTCWaitingList.Interface;
 using DTCWaitingList.Views;
+using System.Reflection;
+using MimeKit.Utils;
 
 namespace DTCWaitingList.Services
 {
@@ -34,18 +36,38 @@ namespace DTCWaitingList.Services
             message.To.Add(new MailboxAddress("", userEmail));
             message.Subject = "Waiting List Confirmation - DO NOT REPLY";
 
-            var bodyBuilder = new BodyBuilder();
-            bodyBuilder.TextBody = $"Dear {userName}\n\n We confirm your request to join our waiting list, " +
-                $"you will be notified of any vacancies according to your submitted timeslots and position in the waiting list.\n\n Thank you and kind regards.\n\n" +
-                $"Dental Treatment Center\n235 Rue de la Loi Bruxelles, 1040\n\nTHIS IS AN AUTOMATED SERVICE - PLEASE DO NOT REPLY TO THIS EMAIL";
+            try
+            {
+                var bodyBuilder = new BodyBuilder();
+                string imagePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, @"Resources\thumbnail.jpg");
+                var image = bodyBuilder.LinkedResources.Add(imagePath);
+                image.ContentId = MimeUtils.GenerateMessageId();
 
-            message.Body = bodyBuilder.ToMessageBody();
+                bodyBuilder.HtmlBody = $@"
+                    <div style='font-size: 16px; font-family: Arial, sans-serif;'>
+                        <p>Dear {userName},</p>
+                        <br>
+                        <p>We confirm your request to join our waiting list, you will be notified of any vacancies according to your submitted availability and position in the waiting list.</p>
+                        <br>
+                        <p>Thank you and kind regards.</p>
+                        <img src='cid:{image.ContentId}' style='float: left; display: block; margin: 0 auto; width: 33%; height: auto;'>
+                        <br>
+                        <br>
+                        <p style='font-size: 12px;'>Dental Treatment Center\n235 Rue de la Loi Bruxelles, 1040</p>
+                        <p style='font-size: 12px;'>235 Rue de la Loi Bruxelles, 1040</p>
+                        <p style='font-size: 12px;'>THIS IS AN AUTOMATED SERVICE - PLEASE DO NOT REPLY TO THIS EMAIL</p>
+                    </div>";
 
-            var rawMessage = ConvertToRaw(message);
+                message.Body = bodyBuilder.ToMessageBody();
+                var rawMessage = ConvertToRaw(message);
+                var gmailMessage = new Message { Raw = rawMessage };
 
-            var gmailMessage = new Message { Raw = rawMessage };
-
-            await _service.Users.Messages.Send(gmailMessage, hostEmail).ExecuteAsync();
+                await _service.Users.Messages.Send(gmailMessage, hostEmail).ExecuteAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Unable to send message, please verify email credentials and try again. Error: {ex.Message}");
+            }
         }
 
         public AppointmentView ReadEmail(string messageId)
@@ -104,11 +126,12 @@ namespace DTCWaitingList.Services
             {
                 var appointment = ReadEmail(message.Id);
 
-                await _data.AddAppointmentAsync(appointment);
-
-                await SendEmailAsync("adiogo.blopes@gmail.com", "test");  // <------ appointment.Email
-
-                await DeleteEmailAsync(message.Id);
+                if (appointment != null)
+                {
+                    await _data.AddAppointmentAsync(appointment);
+                    await SendEmailAsync("adiogo.blopes@gmail.com", appointment.FullName!);  // <------ appointment.Email
+                    await DeleteEmailAsync(message.Id);
+                }
             }
         }
 

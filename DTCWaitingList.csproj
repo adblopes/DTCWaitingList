@@ -17,4 +17,10 @@
     <PackageReference Include="MimeKit" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\thumbnail.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
