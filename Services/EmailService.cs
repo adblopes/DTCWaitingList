@@ -27,7 +27,6 @@ namespace DTCWaitingList.Services
             Service = service;
         }
 
-
         public void SendEmail(string userEmail, string userName)
         {
             var message = new MimeMessage();
