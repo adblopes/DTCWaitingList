@@ -30,7 +30,7 @@ namespace DTCWaitingList
             Results = await _data!.GetAppointmentsAsync(null);
 
 
-            // prevent different thread exeception by blocking calling thread
+            // prevent different thread exception by blocking calling thread
             Dispatcher.Invoke(() =>
             {
                 listView.ItemsSource = Results;

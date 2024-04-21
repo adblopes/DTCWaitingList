@@ -169,7 +169,7 @@ namespace DTCWaitingList.Services
                     ClientId = clientID,
                     ClientSecret = clientSecret
                 },
-                [GmailService.Scope.MailGoogleCom],
+                [GmailService.Scope.GmailModify],
                 hostEmail,
                 CancellationToken.None).Result;
 
@@ -198,7 +198,8 @@ namespace DTCWaitingList.Services
 
         private async Task DeleteEmailAsync(string messageId)
         {
-            await _service.Users.Messages.Delete(hostEmail, messageId).ExecuteAsync();
+            // prefer Trash over Delete as it moves to bin and is of less invasive scope
+            await _service.Users.Messages.Trash(hostEmail, messageId).ExecuteAsync();
         }
     }
 }
