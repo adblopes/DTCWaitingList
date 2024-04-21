@@ -34,7 +34,7 @@ namespace DTCWaitingList
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
-            this.Hide();
+            Hide();
         }
 
         private void OrdenarNomeAscendente_Click(object sender, RoutedEventArgs e)

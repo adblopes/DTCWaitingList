@@ -15,8 +15,8 @@ namespace DTCWaitingList.Services
     public class EmailService : IEmailService
     {
         // client configuration
-        const string clientID = "59857479736-1v8hl51hd8029m0v10jsah5la74sle9o.apps.googleusercontent.com";
-        const string clientSecret = "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";
+        const string clientID = "59857479736-te69q045pk1mimtme66oruukj8msbk0h.apps.googleusercontent.com";
+        const string clientSecret = "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";
         const string hostEmail = "adlopesrepo@gmail.com";
 
         private readonly IDataAccessService _data;
@@ -169,7 +169,7 @@ namespace DTCWaitingList.Services
                     ClientId = clientID,
                     ClientSecret = clientSecret
                 },
-                new[] { GmailService.Scope.GmailModify },
+                [GmailService.Scope.MailGoogleCom],
                 hostEmail,
                 CancellationToken.None).Result;
 
