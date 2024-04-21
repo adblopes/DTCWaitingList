@@ -21,14 +21,20 @@ namespace DTCWaitingList
 
         private async void InitializeMainWindow()
         {
-            await SetResultsAsync();
             InitializeComponent();
+            await SetResultsAsync();
         }
 
         private async Task SetResultsAsync()
         {
             Results = await _data!.GetAppointmentsAsync(null);
-            listView.ItemsSource = Results;
+
+
+            // prevent different thread exeception by blocking calling thread
+            Dispatcher.Invoke(() =>
+            {
+                listView.ItemsSource = Results;
+            });
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
