@@ -1,5 +1,4 @@
 ﻿using DTCWaitingList.Models;
-using DTCWaitingList.Views;
 
 namespace DTCWaitingList.Interface
 {

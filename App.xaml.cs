@@ -4,6 +4,7 @@ using Google.Apis.Gmail.v1;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Windows;
 
 namespace DTCWaitingList
@@ -25,7 +26,6 @@ namespace DTCWaitingList
             {
                 services.AddSingleton<IEmailService, EmailService>();
                 services.AddSingleton<GmailService>();
-                services.AddAutoMapper(typeof(App));
                 services.AddScoped<IDataAccessService, DataAccessService>();
                 services.AddDbContext<WaitingListDb>(options =>
                     options.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=DTCWaitingList;Trusted_Connection=True;TrustServerCertificate=True"),

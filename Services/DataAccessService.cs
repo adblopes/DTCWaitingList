@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using DTCWaitingList.Interface;
+﻿using DTCWaitingList.Interface;
 using DTCWaitingList.Models;
-using DTCWaitingList.Views;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DTCWaitingList.Services
@@ -9,12 +7,10 @@ namespace DTCWaitingList.Services
     public class DataAccessService : IDataAccessService
     {
         private readonly WaitingListDb _dbContext;
-        private readonly IMapper _mapper;
 
-        public DataAccessService(WaitingListDb dbContext, IMapper mapper)
+        public DataAccessService(WaitingListDb dbContext)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
         }
 
         public async Task AddAppointmentAsync(AppointmentView appointmentView)
@@ -34,21 +30,13 @@ namespace DTCWaitingList.Services
 
             var appointmentId = await _dbContext.AddAppointmentAsync(appointment);
 
-            await AddAvailabilityAsync(appointmentView, appointmentId);
+            //await AddAvailabilityAsync(appointmentView, appointmentId);
         }
 
         public async Task<List<AppointmentView>> GetAppointmentsAsync(string[]? args)
         {
             //parse search parameters
-            var appointments = await _dbContext.GetAppointmentsAsync();
-            var result = new List<AppointmentView>();
-
-            foreach (Appointment appointment in appointments)
-            {
-                result.Add(_mapper.Map<AppointmentView>(appointment));
-            }
-
-            return result;
+            return await _dbContext.GetAppointmentsAsync();
         }
 
         public async Task RemoveAppointmentAsync(int id)
@@ -90,27 +78,27 @@ namespace DTCWaitingList.Services
             return result;
         }
 
-        private async Task AddAvailabilityAsync(AppointmentView appointmentView, int appointmentId)
-        {
-            if (appointmentView.AvailableDays == null)
-            {
-                appointmentView.AvailableDays = ["Any Day"];
-            }
-            if (appointmentView.AvailableTimes == null)
-            {
-                appointmentView.AvailableTimes = ["Any Time"];
+        //private async Task AddAvailabilityAsync(AppointmentView appointmentView, int appointmentId)
+        //{
+        //    if (appointmentView.DayOfWeek == null)
+        //    {
+        //        appointmentView.DayOfWeek = ["Any Day"];
+        //    }
+        //    if (appointmentView.TimeOfDay == null)
+        //    {
+        //        appointmentView.TimeOfDay = ["Any Time"];
 
-            }
+        //    }
 
-            foreach (string day in appointmentView.AvailableDays!)
-            {
-                await _dbContext.AddPatientDayAsync(appointmentId, day); 
-            }
+        //    foreach (string day in appointmentView.DayOfWeek!)
+        //    {
+        //        await _dbContext.AddPatientDayAsync(appointmentId, day);
+        //    }
 
-            foreach (string time in appointmentView.AvailableTimes!)
-            {
-                await _dbContext.AddPatientTimeAsync(appointmentId, time); 
-            }
-        }
+        //    foreach (string time in appointmentView.TimeOfDay!)
+        //    {
+        //        await _dbContext.AddPatientTimeAsync(appointmentId, time);
+        //    }
+        //}
     }
 }

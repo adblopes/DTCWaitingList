@@ -7,6 +7,7 @@ namespace DTCWaitingList
     public class WaitingListDb : DbContext
     {
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<AppointmentView> AppointmentViews { get; set; }
         public DbSet<Appointment> AppointmentsHistory { get; set; }
         public DbSet<Reason> Reasons { get; set; }
         public DbSet<ReasonVariant> ReasonVariants { get; set; }
@@ -18,6 +19,43 @@ namespace DTCWaitingList
         public WaitingListDb(DbContextOptions<WaitingListDb> options)
             : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AppointmentView>(eb =>
+            {
+                eb.ToView("AppointmentViews");
+                eb.HasKey(a => a.AppointmentId);
+            });
+        }
+
+        public async Task<List<AppointmentView>> GetAppointmentsAsync()
+        {
+            var a = await AppointmentViews.ToListAsync();
+
+            return a;
+
+        }
+
+        public async Task<Appointment?> GetAppointmentByIdAsync(int appointmentId)
+        {
+            var appointment = await Appointments.FirstOrDefaultAsync(e => e.Id == appointmentId);
+
+            return appointment;
+        }
+
+        // Generic method to search for appointments based on any column or combination of columns
+        public List<AppointmentView>? SearchAppointments<T>(Expression<Func<Appointment, bool>> predicate) where T : class, new()
+        {
+            var list = GetAppointmentsAsync();
+
+            //if (list != null)
+            //{
+            //    return list.Where(predicate.Compile()).ToList();
+            //}
+
+            return null;
         }
 
         public async Task<int> AddAppointmentAsync(Appointment appointment)
@@ -36,20 +74,12 @@ namespace DTCWaitingList
             {
                 Appointments.Remove(appointment);
                 await AppointmentsHistory.AddAsync(appointment);
+
+                PatientDays.RemoveRange(PatientDays.Where(x => x.PatientId == appointmentId));
+                PatientTimes.RemoveRange(PatientTimes.Where(x => x.PatientId == appointmentId));
+
                 await SaveChangesAsync();
             }
-        }
-
-        public async Task<Appointment?> GetAppointmentByIdAsync(int appointmentId)
-        {
-            var appointment = await Appointments.FirstOrDefaultAsync(e => e.Id == appointmentId);
-
-            return appointment;
-        }
-
-        public async Task<List<Appointment>> GetAppointmentsAsync()
-        {
-            return await Appointments.ToListAsync();
         }
 
         public async Task<List<Reason>> GetReasonsAsync()
@@ -85,7 +115,7 @@ namespace DTCWaitingList
             await PatientDays.AddAsync(pd);
             await SaveChangesAsync();
         }
-        
+
         public async Task AddPatientTimeAsync(int appointmentId, string time)
         {
             var times = await GetTimesAsync();
@@ -98,20 +128,6 @@ namespace DTCWaitingList
 
             await PatientTimes.AddAsync(pt);
             await SaveChangesAsync();
-        }
-
-
-        // Generic method to search for appointments based on any column or combination of columns
-        public List<Appointment>? SearchAppointments<T>(Expression<Func<Appointment, bool>> predicate) where T : class, new()
-        {
-            var list = GetAppointmentsAsync();
-
-            //if (list != null)
-            //{
-            //    return list.Where(predicate.Compile()).ToList();
-            //}
-
-            return null;
         }
     }
 }

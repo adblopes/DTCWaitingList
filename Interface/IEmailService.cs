@@ -1,4 +1,4 @@
-﻿using DTCWaitingList.Views;
+﻿using DTCWaitingList.Models;
 using Google.Apis.Gmail.v1.Data;
 
 namespace DTCWaitingList.Interface

@@ -1,6 +1,5 @@
 ﻿using DTCWaitingList.Interface;
 using DTCWaitingList.Models;
-using DTCWaitingList.Views;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +27,6 @@ namespace DTCWaitingList
         private async Task SetResultsAsync()
         {
             Results = await _data!.GetAppointmentsAsync(null);
-
 
             // prevent different thread exception by blocking calling thread
             Dispatcher.Invoke(() =>

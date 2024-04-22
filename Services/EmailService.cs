@@ -6,9 +6,9 @@ using System.Text;
 using MimeKit;
 using System.IO;
 using DTCWaitingList.Interface;
-using DTCWaitingList.Views;
 using System.Reflection;
 using MimeKit.Utils;
+using DTCWaitingList.Models;
 
 namespace DTCWaitingList.Services
 {
@@ -102,8 +102,8 @@ namespace DTCWaitingList.Services
                 var days = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Days) + emailParams.Days.Length, decodedMessage.IndexOf(emailParams.Times) - decodedMessage.IndexOf(emailParams.Days) - emailParams.Days.Length).Replace("\r\n", string.Empty).Trim();
                 var times = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Times) + emailParams.Times.Length, decodedMessage.IndexOf(emailParams.Comment) - decodedMessage.IndexOf(emailParams.Times) - emailParams.Times.Length).Replace("\r\n", string.Empty).Trim();
 
-                appointment.AvailableDays = days.Contains("Any Day") ? [days] : days.Split(" ");
-                appointment.AvailableTimes = times.Contains("Any Day") ? [times] : times.Split(" ");
+                //appointment.DayOfWeek = days.Contains("Any Day") ? [days] : days.Split(" ");
+                //appointment.TimeOfDay = times.Contains("Any Day") ? [times] : times.Split(" ");
 
                 var gmailDate = message.InternalDate ?? DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 appointment.CreatedDate = DateTimeOffset.FromUnixTimeMilliseconds(gmailDate + (long)TimeSpan.FromMinutes(60).TotalMilliseconds).DateTime;
