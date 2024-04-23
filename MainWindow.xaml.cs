@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Data;
+using System.Reflection;
+using System.IO;
 
 namespace DTCWaitingList
 {
@@ -23,15 +25,15 @@ namespace DTCWaitingList
         private void InitializeMainWindow()
         { 
             InitializeNotifyIcon();
+            InitializeComponent();
             SetResults();
-            DataContext = this;
         }
 
         private void SetResults()
         {
             Results = _data!.GetPatients();
 
-            // prevent different thread exception by blocking calling thread
+            //prevent different thread exception by blocking calling thread
             //Dispatcher.Invoke(() =>
             //{
                 listView.ItemsSource = Results;
@@ -120,6 +122,11 @@ namespace DTCWaitingList
 
             // Limpar os campos após adicionar o paciente
             LimparCamposAdicaoPaciente();
+        }
+
+        private void RemoverPaciente_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void LimparCamposAdicaoPaciente()
@@ -242,7 +249,7 @@ namespace DTCWaitingList
         private void InitializeNotifyIcon()
         {
             notifyIcon = new NotifyIcon();
-            notifyIcon.Icon = new System.Drawing.Icon("agenda.ico"); // Especifique o caminho para o ícone
+            notifyIcon.Icon = new System.Drawing.Icon(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, @"Resources\agenda.ico"));
             notifyIcon.Visible = false;
             notifyIcon.DoubleClick += (s, args) =>
             {
@@ -262,7 +269,5 @@ namespace DTCWaitingList
             notifyIcon!.ShowBalloonTip(3000);
         }
     }
-
-
 }
 

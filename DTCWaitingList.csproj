@@ -9,8 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="agenda.png" />
-    <None Remove="dtc.ico" />
+    <None Remove="Resources\agenda.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\agenda.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -20,11 +25,6 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="MimeKit" Version="4.3.0" />
     <PackageReference Include="WPF-UI" Version="3.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="agenda.png" />
-    <Resource Include="dtc.ico" />
   </ItemGroup>
 
   <ItemGroup>
