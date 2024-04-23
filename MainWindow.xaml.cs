@@ -10,11 +10,9 @@ namespace DTCWaitingList
 {
     public partial class MainWindow : Window
     {
-        private NotifyIcon notifyIcon;
-
-        public class Paciente
         private readonly IDataAccessService? _data;
         public IEnumerable<Patient>? Results { get; set; }
+        public NotifyIcon? notifyIcon { get; set; }
 
         public MainWindow(IDataAccessService data)
         {
@@ -22,22 +20,23 @@ namespace DTCWaitingList
             InitializeMainWindow();
         }
 
-        private async void InitializeMainWindow()
+        private void InitializeMainWindow()
+        { 
             InitializeNotifyIcon();
-            await SetResultsAsync();
+            SetResults();
             DataContext = this;
         }
 
-    private async Task SetResultsAsync()
-    {
-        Results = _data!.GetPatients();
-
-        // prevent different thread exception by blocking calling thread
-        Dispatcher.Invoke(() =>
+        private void SetResults()
         {
-            listView.ItemsSource = Results;
-        });
-    }
+            Results = _data!.GetPatients();
+
+            // prevent different thread exception by blocking calling thread
+            //Dispatcher.Invoke(() =>
+            //{
+                listView.ItemsSource = Results;
+            //});
+        }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -70,18 +69,18 @@ namespace DTCWaitingList
         {
             ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
             view.SortDescriptions.Clear();
-            Button button = sender as Button;
+            System.Windows.Controls.Button button = sender as System.Windows.Controls.Button;
             Patient paciente = button.DataContext as Patient;
             //MessageBoxResult result = MessageBox.Show($"Tem certeza que deseja remover /*{paciente.Nome} {paciente.Apelido}*/ da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
             //if (result == MessageBoxResult.Yes)
             //{
             //    //Results.Remove(paciente);
             //}
-            MessageBoxResult result = MessageBox.Show($"Tem certeza que deseja remover {paciente.Nome} {paciente.Apelido} da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
-            {
-                Resultados.Remove(paciente);
-            }
+            //MessageBoxResult result = System.Windows.MessageBox.Show($"Tem certeza que deseja remover {paciente.Nome} {paciente.Apelido} da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            //if (result == MessageBoxResult.Yes)
+            //{
+            //    Resultados.Remove(paciente);
+            //}
         }
 
         private void Procurar_Click(object sender, RoutedEventArgs e)
@@ -257,10 +256,10 @@ namespace DTCWaitingList
         {
             e.Cancel = true;
             this.Hide();
-            notifyIcon.Visible = true;
-            notifyIcon.BalloonTipTitle = "Aplicação Minimizada";
-            notifyIcon.BalloonTipText = "Sua aplicação foi minimizada para a bandeja.";
-            notifyIcon.ShowBalloonTip(3000);
+            notifyIcon!.Visible = true;
+            notifyIcon!.BalloonTipTitle = "Aplicação Minimizada";
+            notifyIcon!.BalloonTipText = "Sua aplicação foi minimizada para a bandeja.";
+            notifyIcon!.ShowBalloonTip(3000);
         }
     }
 
