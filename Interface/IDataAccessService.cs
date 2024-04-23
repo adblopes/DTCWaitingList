@@ -4,14 +4,12 @@ namespace DTCWaitingList.Interface
 {
     public interface IDataAccessService
     {
-        public List<Appointment> GetAppointments(string[] args);
+        public List<Patient> GetPatients();
 
-        public void RemoveAppointment(int id);
+        public Task RemovePatientAsync(int id);
 
-        public void AddAppointment(Appointment appointment);
+        public Task AddPatientAsync(Patient patient);
 
-        public List<Reason> GetReasons();
-
-        public List<ReasonVariant> GetReasonVariants();
+        public Task<List<Reason>>? GetReasonsAsync();
     }
 }

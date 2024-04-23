@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using DTCWaitingList.Interface;
+using DTCWaitingList.Models;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,71 +8,41 @@ using System.Windows.Data;
 
 namespace DTCWaitingList
 {
-    public partial class PacientesEmListaDeEspera : Window
+    public partial class MainWindow : Window
     {
         private NotifyIcon notifyIcon;
 
         public class Paciente
+        private readonly IDataAccessService? _data;
+        public IEnumerable<Patient>? Results { get; set; }
+
+        public MainWindow(IDataAccessService data)
         {
-            public string Nome { get; set; }
-            public string Apelido { get; set; }
-            public string Email { get; set; }
-            public string Telefone { get; set; }
-            public string DiasDisponiveis { get; set; }
-            public string HorasDisponíveis { get; set; }
-            public string TipoConsulta { get; set; }
-            public bool NovoPaciente { get; set; }
-            public DateTime DataEntradaFilaEspera { get; set; }
+            _data = data;
+            InitializeMainWindow();
         }
 
-        public ObservableCollection<Paciente> Resultados { get; set; }
-
-        public PacientesEmListaDeEspera()
-        {
-            InitializeComponent();
-            Resultados = new ObservableCollection<Paciente>();
-            MockResultados();
+        private async void InitializeMainWindow()
             InitializeNotifyIcon();
-            listView.ItemsSource = Resultados;
+            await SetResultsAsync();
             DataContext = this;
         }
 
-        private void MockResultados()
+    private async Task SetResultsAsync()
+    {
+        Results = _data!.GetPatients();
+
+        // prevent different thread exception by blocking calling thread
+        Dispatcher.Invoke(() =>
         {
-            Resultados.Add(new Paciente
-            {
-                Nome = "João",
-                Apelido = "Silva",
-                Email = "joao.silva@example.com",
-                Telefone = "123456789",
-                DiasDisponiveis = "Segunda-feira, Terça-feira",
-                TipoConsulta = "Checkup",
-                NovoPaciente = true,
-                DataEntradaFilaEspera = DateTime.Now.AddDays(-5)
-            });
-            Resultados.Add(new Paciente
-            {
-                Nome = "Maria",
-                Apelido = "Santos",
-                Email = "maria.santos@example.com",
-                Telefone = "987654321",
-                DiasDisponiveis = "Quarta-feira, Sexta-feira",
-                TipoConsulta = "Cleaning",
-                NovoPaciente = false,
-                DataEntradaFilaEspera = DateTime.Now.AddDays(-7)
-            });
-            Resultados.Add(new Paciente
-            {
-                Nome = "Carlos",
-                Apelido = "Oliveira",
-                Email = "carlos.oliveira@example.com",
-                Telefone = "567891234",
-                DiasDisponiveis = "Segunda-feira, Quarta-feira",
-                HorasDisponíveis = "Manhã",
-                TipoConsulta = "Checkup",
-                NovoPaciente = true,
-                DataEntradaFilaEspera = DateTime.Now.AddDays(-10)
-            });
+            listView.ItemsSource = Results;
+        });
+    }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
         }
 
         private void OrdenarNomeAscendente_Click(object sender, RoutedEventArgs e)
@@ -100,14 +70,14 @@ namespace DTCWaitingList
         {
             ICollectionView view = CollectionViewSource.GetDefaultView(listView.ItemsSource);
             view.SortDescriptions.Clear();
-            view.SortDescriptions.Add(new SortDescription("Apelido", ListSortDirection.Descending));
-        }
-
-        private void RemoverPaciente_Click(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Controls.Button button = sender as System.Windows.Controls.Button;
-            Paciente paciente = button.DataContext as Paciente;
-            MessageBoxResult result = System.Windows.MessageBox.Show($"Tem certeza que deseja remover {paciente.Nome} {paciente.Apelido} da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            Button button = sender as Button;
+            Patient paciente = button.DataContext as Patient;
+            //MessageBoxResult result = MessageBox.Show($"Tem certeza que deseja remover /*{paciente.Nome} {paciente.Apelido}*/ da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            //if (result == MessageBoxResult.Yes)
+            //{
+            //    //Results.Remove(paciente);
+            //}
+            MessageBoxResult result = MessageBox.Show($"Tem certeza que deseja remover {paciente.Nome} {paciente.Apelido} da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
                 Resultados.Remove(paciente);
@@ -116,13 +86,13 @@ namespace DTCWaitingList
 
         private void Procurar_Click(object sender, RoutedEventArgs e)
         {
-            var resultadosFiltrados = new ObservableCollection<Paciente>();
-            resultadosFiltrados = Resultados;
+            var resultadosFiltrados = new List<Patient>();
+            resultadosFiltrados = (List<Patient>)Results;
             if (cmbDiasDisponiveis.SelectedItem != null ||
                 cmbHoraDisponivel.SelectedItem != null ||
                 cmbTipoConsulta.SelectedItem != null)
             {
-                resultadosFiltrados = Resultados;
+                resultadosFiltrados = (List<Patient>)Results;
             }
             listView.ItemsSource = resultadosFiltrados;
         }
@@ -134,20 +104,20 @@ namespace DTCWaitingList
 
         private void AdicionarPaciente_Click(object sender, RoutedEventArgs e)
         {
-            Paciente novoPaciente = new Paciente
+            Patient novoPaciente = new Patient
             {
-                Nome = txtNome.Text,
-                Apelido = txtApelido.Text,
-                Email = txtEmail.Text,
-                Telefone = txtTelefone.Text,
-                DiasDisponiveis = cmbDiasDisponiveis.SelectedItem.ToString(),
-                HorasDisponíveis = cmbHorasDisponiveis.SelectedItem.ToString(),
-                TipoConsulta = cmbTipoConsulta.SelectedItem.ToString(),
-                NovoPaciente = chkNovoPaciente.IsChecked ?? false,
-                DataEntradaFilaEspera = DateTime.Now
+                //Nome = txtNome.Text,
+                //Apelido = txtApelido.Text,
+                //Email = txtEmail.Text,
+                //Telefone = txtTelefone.Text,
+                //DiasDisponiveis = cmbDiasDisponiveis.SelectedItem.ToString(),
+                //HorasDisponíveis = cmbHorasDisponiveis.SelectedItem.ToString(),
+                //TipoConsulta = cmbTipoConsulta.SelectedItem.ToString(),
+                //NovoPaciente = chkNovoPaciente.IsChecked ?? false,
+                //DataEntradaFilaEspera = DateTime.Now
             };
 
-            Resultados.Add(novoPaciente);
+            Results.Append(novoPaciente);
 
             // Limpar os campos após adicionar o paciente
             LimparCamposAdicaoPaciente();

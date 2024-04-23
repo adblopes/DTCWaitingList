@@ -3,14 +3,19 @@ using Google.Apis.Gmail.v1.Data;
 
 namespace DTCWaitingList.Interface
 {
+    //since there's no API to call, appointments are read from templated gmail messages
     public interface IEmailService
     {
-        void SendEmail(string userEmail, string userName);
+        //send Email reply
+        Task SendEmailAsync(string userEmail, string userName);
 
-        Appointment ReadEmail(string messageId);
+        //read and process appointment email, returning a new Patient object 
+        Patient ReadEmail(string messageId);
 
-        void ProcessInboxUnread();
+        //read, reply and trash unread gmail messages
+        Task ProcessInboxUnreadAsync();
 
+        //list all gmail messages
         List<Message> ListMessages(string userId, string query);
     }
 }

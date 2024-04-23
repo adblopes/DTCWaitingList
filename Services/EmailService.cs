@@ -6,6 +6,8 @@ using System.Text;
 using MimeKit;
 using System.IO;
 using DTCWaitingList.Interface;
+using System.Reflection;
+using MimeKit.Utils;
 using DTCWaitingList.Models;
 
 namespace DTCWaitingList.Services
@@ -13,67 +15,123 @@ namespace DTCWaitingList.Services
     public class EmailService : IEmailService
     {
         // client configuration
-        const string clientID = "59857479736-1v8hl51hd8029m0v10jsah5la74sle9o.apps.googleusercontent.com";
-        const string clientSecret = "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";
+        const string clientID = "59857479736-te69q045pk1mimtme66oruukj8msbk0h.apps.googleusercontent.com";
+        const string clientSecret = "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";
         const string hostEmail = "adlopesrepo@gmail.com";
 
-        private readonly AppointmentsDbContext _dbContext;
+        private readonly IDataAccessService _data;
 
-        public GmailService Service { get; set; }
+        public GmailService _service { get; set; }
 
-        public EmailService(AppointmentsDbContext dbContext, GmailService service)
+        public EmailService(IDataAccessService data, GmailService service)
         {
-            _dbContext = dbContext;
-            Service = service;
+            _data = data;
+            _service = service;
         }
 
-        public void SendEmail(string userEmail, string userName)
+        public async Task SendEmailAsync(string userEmail, string userName)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("Dental Treatment Center", hostEmail));
             message.To.Add(new MailboxAddress("", userEmail));
             message.Subject = "Waiting List Confirmation - DO NOT REPLY";
 
-            var bodyBuilder = new BodyBuilder();
-            bodyBuilder.TextBody = $"Dear {userName}\n\n We confirm your request to join our waiting list, " +
-                $"you will be notified of any vacancies according to your submitted timeslots and position in the waiting list.\n\n Thank you and kind regards.\n\n" +
-                $"Dental Treatment Center\n235 Rue de la Loi Bruxelles, 1040\n\nTHIS IS AN AUTOMATED SERVICE - PLEASE DO NOT REPLY TO THIS EMAIL";
+            try
+            {
+                var bodyBuilder = new BodyBuilder();
+                string imagePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, @"Resources\thumbnail.jpg");
+                var image = bodyBuilder.LinkedResources.Add(imagePath);
+                image.ContentId = MimeUtils.GenerateMessageId();
 
-            message.Body = bodyBuilder.ToMessageBody();
+                bodyBuilder.HtmlBody = $@"
+                    <div style='font-size: 16px; font-family: Arial, sans-serif;'>
+                        <p>Dear {userName},</p>
+                        <br>
+                        <p>We confirm your request to join our waiting list, you will be notified of any vacancies according to your submitted availability and position in the waiting list.</p>
+                        <br>
+                        <p>Thank you and kind regards.</p>
+                        <img src='cid:{image.ContentId}' style='float: left; display: block; margin: 0 auto; width: 33%; height: auto;'>
+                        <br>
+                        <br>
+                        <p style='font-size: 12px;'>Dental Treatment Center\n235 Rue de la Loi Bruxelles, 1040</p>
+                        <p style='font-size: 12px;'>235 Rue de la Loi Bruxelles, 1040</p>
+                        <p style='font-size: 12px;'>THIS IS AN AUTOMATED SERVICE - PLEASE DO NOT REPLY TO THIS EMAIL</p>
+                    </div>";
 
-            var rawMessage = ConvertToRaw(message);
+                message.Body = bodyBuilder.ToMessageBody();
+                var rawMessage = ConvertToRaw(message);
+                var gmailMessage = new Message { Raw = rawMessage };
 
-            var gmailMessage = new Message { Raw = rawMessage };
-
-            Service.Users.Messages.Send(gmailMessage, hostEmail).Execute();
-
+                await _service.Users.Messages.Send(gmailMessage, hostEmail).ExecuteAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Unable to send message, please verify email credentials and try again. Error: {ex.Message}");
+            }
         }
 
-        public Appointment ReadEmail(string messageId)
+        public Patient ReadEmail(string messageId)
         {
-            Appointment appointment = new Appointment();
+            Patient appointment = new();
 
-            Message message = Service.Users.Messages.Get(hostEmail, messageId).Execute();
+            try
+            {
+                Message message = _service.Users.Messages.Get(hostEmail, messageId).Execute();
 
-            var data = Convert.FromBase64String(message.Payload.Parts[0].Body.Data);
+                var data = Convert.FromBase64String(message.Payload.Parts[0].Body.Data);
 
-            var decodedMessage = Encoding.UTF8.GetString(data);
+                var decodedMessage = Encoding.UTF8.GetString(data);
 
-            appointment.FullName = decodedMessage.Substring(decodedMessage.IndexOf("Name:"), decodedMessage.IndexOf("Email:")).Trim();
-            appointment.Email = decodedMessage.Substring(decodedMessage.IndexOf("Email:"), decodedMessage.IndexOf("Phone:")).Trim();
-            appointment.Phone = decodedMessage.Substring(decodedMessage.IndexOf("Phone:"), decodedMessage.IndexOf("Are you")).Trim();
-            appointment.IsClient = decodedMessage.Substring(decodedMessage.IndexOf("Are you a current patient?"), decodedMessage.IndexOf("Preferred day(s) of the week for an appointment?")).Trim() == "Yes";
-            appointment.AvailableDays = decodedMessage.Substring(decodedMessage.IndexOf("Preferred day(s) of the week for an appointment?"), decodedMessage.IndexOf("Preferred time(s) for an appointment?")).Trim().Split("\n").ToList();
-            appointment.AvailableTimes = decodedMessage.Substring(decodedMessage.IndexOf("Preferred time(s) for an appointment?"), decodedMessage.IndexOf("Comment:")).Trim().Split("\n").ToList();
-            appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf("Comment:"), decodedMessage.IndexOf("SID:")).Trim();
-            appointment.Reasons = SearchReasons(appointment.FullReason);
+                var emailParams = new
+                {
+                    Name = "Name:",
+                    Email = "Email:",
+                    Phone = "Phone:",
+                    Current = "Are you a current patient?",
+                    Comment = "Comment:",
+                    Days = "Preferred day(s) of the week for an appointment?",
+                    Times = "Preferred time(s) for an appointment?",
+                };
 
-            return appointment;
+                appointment.FullName = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Name) + emailParams.Name.Length, decodedMessage.IndexOf(emailParams.Email) - decodedMessage.IndexOf(emailParams.Name) - emailParams.Name.Length).Trim();
+                appointment.Email = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Email) + emailParams.Email.Length, decodedMessage.IndexOf(emailParams.Phone) - decodedMessage.IndexOf(emailParams.Email) - emailParams.Email.Length).Trim();
+                appointment.Phone = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Phone) + emailParams.Phone.Length, decodedMessage.IndexOf("Are you") - decodedMessage.IndexOf(emailParams.Phone) - emailParams.Phone.Length).Trim();
+                appointment.IsClient = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Current) + emailParams.Current.Length, decodedMessage.IndexOf(emailParams.Days) - decodedMessage.IndexOf(emailParams.Current) - emailParams.Current.Length).Trim() == "Yes";
+                appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Comment) + emailParams.Comment.Length, decodedMessage.IndexOf("SID:") - decodedMessage.IndexOf(emailParams.Comment) - emailParams.Comment.Length).Trim();
+
+                var days = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Days) + emailParams.Days.Length, decodedMessage.IndexOf(emailParams.Times) - decodedMessage.IndexOf(emailParams.Days) - emailParams.Days.Length).Replace("\r\n", string.Empty).Trim();
+                var times = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Times) + emailParams.Times.Length, decodedMessage.IndexOf(emailParams.Comment) - decodedMessage.IndexOf(emailParams.Times) - emailParams.Times.Length).Replace("\r\n", string.Empty).Trim();
+
+                var tempDays = days.Contains("Any Day") ? [days] : days.Split(" ");
+                var tempTimes = times.Contains("Any Day") ? [times] : times.Split(" ");
+
+                appointment.PatientDays = new List<PatientDay>();
+                appointment.PatientTimes = new List<PatientTime>();
+
+                foreach (var day in tempDays)
+                {
+                    appointment.PatientDays.Add(new PatientDay { Day = new Day { NameOfDay = day} });
+                }
+                foreach (var time in tempTimes)
+                {
+                    appointment.PatientTimes.Add(new PatientTime { Time = new Time { TimeOfDay = time} });
+                }
+
+                //if gmail doesn't return the date (in unix time milliseconds) just add today's date
+                var gmailDate = message.InternalDate ?? DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                appointment.CreatedDate = DateTimeOffset.FromUnixTimeMilliseconds(gmailDate + (long)TimeSpan.FromMinutes(60).TotalMilliseconds).DateTime;
+
+                return appointment;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Couldn't read email message, please call support. Error: {ex.Message}");
+            }
         }
 
-        public void ProcessInboxUnread()
+        public async Task ProcessInboxUnreadAsync()
         {
-            Service = AuthenticateGmailService();
+            _service = AuthenticateGmailService();
 
             var messages = ListMessages(hostEmail, "subject:(ProSites Appointment Request Response) is:unread");
 
@@ -81,24 +139,20 @@ namespace DTCWaitingList.Services
             {
                 var appointment = ReadEmail(message.Id);
 
-                _dbContext.AddAppointment(appointment);
-
-                SendEmail("adiogo.blopes@gmail.com", "test");  // <------ appointment.Email
-
-                DeleteEmail(message.Id);
+                if (appointment != null)
+                {
+                    await _data.AddPatientAsync(appointment);
+                    await SendEmailAsync("adiogo.blopes@gmail.com", appointment.FullName!);  // <------ appointment.Email
+                    await DeleteEmailAsync(message.Id);
+                }
             }
-        }
-
-        private void DeleteEmail(string messageId)
-        {
-            Service.Users.Messages.Delete(hostEmail, messageId).Execute();
         }
 
         // List Gmail messages
         public List<Message> ListMessages(string userId, string query)
         {
             List<Message> result = new List<Message>();
-            UsersResource.MessagesResource.ListRequest request = Service.Users.Messages.List(userId);
+            UsersResource.MessagesResource.ListRequest request = _service.Users.Messages.List(userId);
             request.Q = query;
 
             do
@@ -127,7 +181,7 @@ namespace DTCWaitingList.Services
                     ClientId = clientID,
                     ClientSecret = clientSecret
                 },
-                new[] { GmailService.Scope.GmailModify },
+                [GmailService.Scope.GmailModify],
                 hostEmail,
                 CancellationToken.None).Result;
 
@@ -154,24 +208,10 @@ namespace DTCWaitingList.Services
             }
         }
 
-        private List<Reason> SearchReasons(string input)
+        private async Task DeleteEmailAsync(string messageId)
         {
-            var result = new List<Reason>();
-            var reasons = _dbContext.GetReasons();
-
-            input = input.ToLower();
-
-            foreach (var reason in reasons)
-            {
-                string reasonStr = reason.ReasonName!.ToLower();
-
-                if (input.Contains(reasonStr))
-                {
-                    result.Add(reason);
-                }
-            }
-
-            return result;
+            // prefer Trash over Delete as it moves to bin and is of less invasive scope
+            await _service.Users.Messages.Trash(hostEmail, messageId).ExecuteAsync();
         }
     }
 }

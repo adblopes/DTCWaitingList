@@ -2,10 +2,12 @@
 {
     public class ReasonVariant
     {
-        public int Id { get; set; }
+        public int VariantId { get; set; }
 
         public string? Term { get; set; }
 
         public int ReasonId { get; set; }
+
+        public Reason? Reason { get; set; }
     }
 }

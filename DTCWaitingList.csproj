@@ -27,4 +27,10 @@
     <Resource Include="dtc.ico" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\thumbnail.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
