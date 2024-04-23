@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTCWaitingList", "DTCWaitingList.csproj", "{064F9262-639D-4EDC-A61C-9EFBA9BEBF07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTCWaitingList", "DTCWaitingList.csproj", "{064F9262-639D-4EDC-A61C-9EFBA9BEBF07}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B911DC1C-A0AB-4A0E-AD12-79AD0B4D50EC}"
+	ProjectSection(SolutionItems) = preProject
+		agenda.png = agenda.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

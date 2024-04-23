@@ -3,12 +3,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Data;
 
 namespace DTCWaitingList
 {
     public partial class PacientesEmListaDeEspera : Window
     {
+        private NotifyIcon notifyIcon;
+
         public class Paciente
         {
             public string Nome { get; set; }
@@ -29,6 +32,7 @@ namespace DTCWaitingList
             InitializeComponent();
             Resultados = new ObservableCollection<Paciente>();
             MockResultados();
+            InitializeNotifyIcon();
             listView.ItemsSource = Resultados;
             DataContext = this;
         }
@@ -101,9 +105,9 @@ namespace DTCWaitingList
 
         private void RemoverPaciente_Click(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
+            System.Windows.Controls.Button button = sender as System.Windows.Controls.Button;
             Paciente paciente = button.DataContext as Paciente;
-            MessageBoxResult result = MessageBox.Show($"Tem certeza que deseja remover {paciente.Nome} {paciente.Apelido} da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult result = System.Windows.MessageBox.Show($"Tem certeza que deseja remover {paciente.Nome} {paciente.Apelido} da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
                 Resultados.Remove(paciente);
@@ -266,7 +270,30 @@ namespace DTCWaitingList
         }
 
 
+        private void InitializeNotifyIcon()
+        {
+            notifyIcon = new NotifyIcon();
+            notifyIcon.Icon = new System.Drawing.Icon("agenda.ico"); // Especifique o caminho para o ícone
+            notifyIcon.Visible = false;
+            notifyIcon.DoubleClick += (s, args) =>
+            {
+                this.Show();
+                this.WindowState = WindowState.Normal;
+                notifyIcon.Visible = false;
+            };
+        }
 
-
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.Hide();
+            notifyIcon.Visible = true;
+            notifyIcon.BalloonTipTitle = "Aplicação Minimizada";
+            notifyIcon.BalloonTipText = "Sua aplicação foi minimizada para a bandeja.";
+            notifyIcon.ShowBalloonTip(3000);
+        }
     }
+
+
 }
+

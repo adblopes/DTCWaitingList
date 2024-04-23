@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:DTCWaitingList"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
+         Icon="agenda.png"
         Title="Pacientes em Lista de Espera" Height="500" Width="800">
     <Window.Resources>
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
