@@ -120,7 +120,7 @@ INSERT INTO [dbo].[Patients]
 		   ,[Email]
 		   ,[Phone]
 		   ,[FullReason]
-		   ,[Reason]
+		   ,[ReasonId]
 		   ,[isClient]
 		   ,[CreatedDate])
 	 VALUES
