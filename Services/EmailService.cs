@@ -102,9 +102,22 @@ namespace DTCWaitingList.Services
                 var days = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Days) + emailParams.Days.Length, decodedMessage.IndexOf(emailParams.Times) - decodedMessage.IndexOf(emailParams.Days) - emailParams.Days.Length).Replace("\r\n", string.Empty).Trim();
                 var times = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Times) + emailParams.Times.Length, decodedMessage.IndexOf(emailParams.Comment) - decodedMessage.IndexOf(emailParams.Times) - emailParams.Times.Length).Replace("\r\n", string.Empty).Trim();
 
-                //appointment.DayOfWeek = days.Contains("Any Day") ? [days] : days.Split(" ");
-                //appointment.TimeOfDay = times.Contains("Any Day") ? [times] : times.Split(" ");
+                var tempDays = days.Contains("Any Day") ? [days] : days.Split(" ");
+                var tempTimes = times.Contains("Any Day") ? [times] : times.Split(" ");
 
+                appointment.PatientDays = new List<PatientDay>();
+                appointment.PatientTimes = new List<PatientTime>();
+
+                foreach (var day in tempDays)
+                {
+                    appointment.PatientDays.Add(new PatientDay { Day = new Day { NameOfDay = day} });
+                }
+                foreach (var time in tempTimes)
+                {
+                    appointment.PatientTimes.Add(new PatientTime { Time = new Time { TimeOfDay = time} });
+                }
+
+                //if gmail doesn't return the date (in unix time milliseconds) just add today's date
                 var gmailDate = message.InternalDate ?? DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 appointment.CreatedDate = DateTimeOffset.FromUnixTimeMilliseconds(gmailDate + (long)TimeSpan.FromMinutes(60).TotalMilliseconds).DateTime;
 

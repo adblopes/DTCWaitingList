@@ -18,22 +18,11 @@ namespace DTCWaitingList.Services
             return _dbContext.GetPatients();
         }
 
-        public async Task AddPatientAsync(Patient appointmentView)
+        public async Task AddPatientAsync(Patient patient)
         {
+            patient.ReasonId = await ProcessReasonAsync(patient.FullReason);
 
-            var appointment = new Patient
-            {
-                FullName = appointmentView.FullName,
-                Email = appointmentView.Email,
-                Phone = appointmentView.Phone,
-                FullReason = appointmentView.FullReason,
-                IsClient = appointmentView.IsClient,
-                //CreatedDate = appointmentView.CreatedDate ?? DateTime.Now,
-            };
-
-            //appointment.ReasonId = await ProcessReasonAsync(appointment.FullReason);
-
-            var appointmentId = await _dbContext.AddPatientAsync(appointment);
+            var patientId = await _dbContext.AddPatientAsync(patient);
 
             //await AddAvailabilityAsync(appointmentView, appointmentId);
         }

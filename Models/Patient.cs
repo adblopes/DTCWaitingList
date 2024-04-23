@@ -17,7 +17,7 @@
 
         public Reason? Reason { get; set; }
 
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
         public IList<PatientDay>? PatientDays { get; set; }
 
