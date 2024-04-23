@@ -4,7 +4,6 @@ using Google.Apis.Gmail.v1;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System.Windows;
 
 namespace DTCWaitingList

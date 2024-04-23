@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace DTCWaitingList.Models
+﻿namespace DTCWaitingList.Models
 {
-    [Table("Times")]
-
     public class Time
     {
-        public int Id { get; set; }
+        public int TimeId { get; set; }
 
         public string? TimeOfDay { get; set; }
+        
+        public IList<PatientTime>? PatientTimes { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace DTCWaitingList
     public partial class MainWindow : Window
     {
         private readonly IDataAccessService? _data;
-        public IEnumerable<AppointmentView>? Results { get; set; }
+        public IEnumerable<Patient>? Results { get; set; }
 
         public MainWindow(IDataAccessService data)
         {
@@ -26,7 +26,7 @@ namespace DTCWaitingList
 
         private async Task SetResultsAsync()
         {
-            Results = await _data!.GetAppointmentsAsync(null);
+            Results = _data!.GetPatients();
 
             // prevent different thread exception by blocking calling thread
             Dispatcher.Invoke(() =>
@@ -72,7 +72,7 @@ namespace DTCWaitingList
         private void RemoverPaciente_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            Appointment paciente = button.DataContext as Appointment;
+            Patient paciente = button.DataContext as Patient;
             //MessageBoxResult result = MessageBox.Show($"Tem certeza que deseja remover /*{paciente.Nome} {paciente.Apelido}*/ da lista?", "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Question);
             //if (result == MessageBoxResult.Yes)
             //{
@@ -82,13 +82,13 @@ namespace DTCWaitingList
 
         private void Procurar_Click(object sender, RoutedEventArgs e)
         {
-            var resultadosFiltrados = new List<AppointmentView>();
-            resultadosFiltrados = (List<AppointmentView>)Results;
+            var resultadosFiltrados = new List<Patient>();
+            resultadosFiltrados = (List<Patient>)Results;
             if (cmbDiasDisponiveis.SelectedItem != null ||
                 cmbHoraDisponivel.SelectedItem != null ||
                 cmbTipoConsulta.SelectedItem != null)
             {
-                resultadosFiltrados = (List<AppointmentView>)Results;
+                resultadosFiltrados = (List<Patient>)Results;
             }
             listView.ItemsSource = resultadosFiltrados;
         }
@@ -100,7 +100,7 @@ namespace DTCWaitingList
 
         private void AdicionarPaciente_Click(object sender, RoutedEventArgs e)
         {
-            AppointmentView novoPaciente = new AppointmentView
+            Patient novoPaciente = new Patient
             {
                 //Nome = txtNome.Text,
                 //Apelido = txtApelido.Text,

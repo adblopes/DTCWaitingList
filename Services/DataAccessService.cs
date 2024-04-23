@@ -13,38 +13,43 @@ namespace DTCWaitingList.Services
             _dbContext = dbContext;
         }
 
-        public async Task AddAppointmentAsync(AppointmentView appointmentView)
+        public List<Patient> GetPatients()
+        {
+            return _dbContext.GetPatients();
+        }
+
+        public async Task AddPatientAsync(Patient appointmentView)
         {
 
-            var appointment = new Appointment
+            var appointment = new Patient
             {
                 FullName = appointmentView.FullName,
                 Email = appointmentView.Email,
                 Phone = appointmentView.Phone,
                 FullReason = appointmentView.FullReason,
                 IsClient = appointmentView.IsClient,
-                CreatedDate = appointmentView.CreatedDate ?? DateTime.Now,
+                //CreatedDate = appointmentView.CreatedDate ?? DateTime.Now,
             };
 
-            appointment.ReasonId = await ProcessReasonAsync(appointment.FullReason);
+            //appointment.ReasonId = await ProcessReasonAsync(appointment.FullReason);
 
-            var appointmentId = await _dbContext.AddAppointmentAsync(appointment);
+            var appointmentId = await _dbContext.AddPatientAsync(appointment);
 
             //await AddAvailabilityAsync(appointmentView, appointmentId);
         }
 
-        public async Task<List<AppointmentView>> GetAppointmentsAsync(string[]? args)
-        {
-            //parse search parameters
-            return await _dbContext.GetAppointmentsAsync();
-        }
+        //public async Task<List<Patient>> GetPatientsAsync(string[]? args)
+        //{
+        //    //parse search parameters
+        //    return await _dbContext.GetPatientsAsync();
+        //}
 
-        public async Task RemoveAppointmentAsync(int id)
+        public async Task RemovePatientAsync(int id)
         {
-            var appointment = await _dbContext.GetAppointmentByIdAsync(id);
+            var appointment = await _dbContext.GetPatientByIdAsync(id);
             if (appointment != null)
             {
-                await _dbContext.RemoveAppointmentAsync(id);
+                await _dbContext.RemovePatientAsync(id);
             }
         }
 
@@ -62,7 +67,7 @@ namespace DTCWaitingList.Services
         {
             var reasons = await GetReasonsAsync();
             var variants = await GetReasonVariantsAsync();
-            int result = reasons.First().Id;
+            int result = reasons.First().ReasonId;
 
             if (!fullReason.IsNullOrEmpty())
             {
@@ -70,7 +75,7 @@ namespace DTCWaitingList.Services
 
                 if (data != null)
                 {        
-                    result = reasons.Find(r => r.Id == data.ReasonId)!.Id;
+                    result = reasons.Find(r => r.ReasonId == data.ReasonId)!.ReasonId;
                 }
             
             }

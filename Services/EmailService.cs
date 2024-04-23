@@ -70,9 +70,9 @@ namespace DTCWaitingList.Services
             }
         }
 
-        public AppointmentView ReadEmail(string messageId)
+        public Patient ReadEmail(string messageId)
         {
-            AppointmentView appointment = new();
+            Patient appointment = new();
 
             try
             {
@@ -128,13 +128,12 @@ namespace DTCWaitingList.Services
 
                 if (appointment != null)
                 {
-                    await _data.AddAppointmentAsync(appointment);
+                    await _data.AddPatientAsync(appointment);
                     await SendEmailAsync("adiogo.blopes@gmail.com", appointment.FullName!);  // <------ appointment.Email
                     await DeleteEmailAsync(message.Id);
                 }
             }
         }
-
 
         // List Gmail messages
         public List<Message> ListMessages(string userId, string query)

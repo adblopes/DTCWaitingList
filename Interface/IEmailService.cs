@@ -7,7 +7,7 @@ namespace DTCWaitingList.Interface
     {
         Task SendEmailAsync(string userEmail, string userName);
 
-        AppointmentView ReadEmail(string messageId);
+        Patient ReadEmail(string messageId);
 
         Task ProcessInboxUnreadAsync();
 
