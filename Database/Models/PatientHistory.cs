@@ -1,4 +1,4 @@
-﻿namespace DTCWaitingList.Models
+﻿namespace DTCWaitingList.Database.Models
 {
     public class PatientHistory
     {
@@ -13,7 +13,7 @@
         public string? FullReason { get; set; }
 
         public bool IsClient { get; set; }
-        
+
         public Reason? Reason { get; set; }
 
         public DateTime? CreatedDate { get; set; }

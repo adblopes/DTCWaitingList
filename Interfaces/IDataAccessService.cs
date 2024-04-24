@@ -1,4 +1,5 @@
-﻿using DTCWaitingList.Models;
+﻿using DTCWaitingList.Database.Models;
+using DTCWaitingList.Models;
 
 namespace DTCWaitingList.Interfaces
 {

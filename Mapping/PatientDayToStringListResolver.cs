@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DTCWaitingList.Database.Models;
 using DTCWaitingList.Models;
 
 namespace DTCWaitingList.Mapping

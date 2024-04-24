@@ -1,4 +1,4 @@
-﻿namespace DTCWaitingList.Models
+﻿namespace DTCWaitingList.Database.Models
 {
     public class Reason
     {

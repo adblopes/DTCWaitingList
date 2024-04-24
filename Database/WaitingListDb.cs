@@ -1,4 +1,4 @@
-﻿using DTCWaitingList.Models;
+﻿using DTCWaitingList.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -65,9 +65,25 @@ namespace DTCWaitingList.Database
         public List<Patient> GetPatients()
         {
             //retrieve day and time names to fill in the view later, possible async issue
+            var patients = Patients.Include(p => p.PatientDays).Include(p => p.PatientTimes).Include(p => p.Reason).ToList();
+            
             var days = Days;
             var times = Times;
-            return Patients.Include(p => p.PatientDays).Include(p => p.PatientTimes).Include(p => p.Reason).ToList();
+
+            foreach (Patient patient in patients)
+            {
+                foreach (PatientDay pd in patient.PatientDays)
+                {
+                    pd.Day = days.First(d => d.DayId == pd.DayId);
+                }
+
+                foreach (PatientTime pt in patient.PatientTimes)
+                {
+                    pt.Time = times.First(t => t.TimeId == pt.TimeId);
+                }
+            }
+
+            return patients;
         }
 
         public List<Day> GetDays()
