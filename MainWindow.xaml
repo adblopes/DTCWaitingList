@@ -87,8 +87,6 @@
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
 												<TextBlock Text="Email"/>
-												<Button Content="▲" Style="{StaticResource SmallButtonStyle}"/>
-												<Button Content="▼"  Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
@@ -98,8 +96,6 @@
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
 												<TextBlock Text="Phone"/>
-												<Button Content="▲" Style="{StaticResource SmallButtonStyle}"/>
-												<Button Content="▼"  Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
@@ -109,8 +105,6 @@
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
 												<TextBlock Text="Available Days"/>
-												<Button Content="▲" Style="{StaticResource SmallButtonStyle}"/>
-												<Button Content="▼"  Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
@@ -120,8 +114,6 @@
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
 												<TextBlock Text="Available Timeslots"/>
-												<Button Content="▲" Style="{StaticResource SmallButtonStyle}"/>
-												<Button Content="▼"  Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
@@ -131,8 +123,6 @@
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
 												<TextBlock Text="Type"/>
-												<Button Content="▲" Style="{StaticResource SmallButtonStyle}"/>
-												<Button Content="▼"  Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
@@ -142,8 +132,6 @@
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
 												<TextBlock Text="Current Patient"/>
-												<Button Content="▲" Style="{StaticResource SmallButtonStyle}"/>
-												<Button Content="▼"  Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
@@ -153,8 +141,6 @@
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
 												<TextBlock Text="Waiting Since"/>
-												<ui:Button Content="▲"  Style="{StaticResource SmallButtonStyle}"/>
-												<ui:Button Content="▼" Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
@@ -212,82 +198,78 @@
 				</Grid>
 			</TabItem>
 			<!-- Terceira aba - Adicionar Paciente -->
-			<TabItem Header="Adicionar Paciente">
-				<Grid Margin="10">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
+            <TabItem Header="Adicionar Paciente">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-					<!-- Título da aba -->
-					<TextBlock Text="Adicionar Novo Paciente" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
+                    <!-- Título da aba -->
+                    <TextBlock Text="Adicionar Novo Paciente" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
 
-					<!-- Nome -->
-					<TextBlock Text="Nome:" Grid.Row="1" FontWeight="Bold"/>
-					<TextBox x:Name="txtNome" Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
+                    <!-- Nome -->
+                    <TextBlock Text="Nome:" Grid.Row="1" FontWeight="Bold"/>
+                    <TextBox x:Name="txtNome" Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
 
-					<!-- Apelido -->
-					<TextBlock Text="Apelido:" Grid.Row="2" FontWeight="Bold" Margin="0 10 0 0"/>
-					<TextBox x:Name="txtApelido" Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
+                    <!-- Apelido -->
+                    <TextBlock Text="Apelido:" Grid.Row="2" FontWeight="Bold" Margin="0 10 0 0"/>
+                    <TextBox x:Name="txtApelido" Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
 
-					<!-- Email -->
-					<TextBlock Text="Email:" Grid.Row="3" FontWeight="Bold" Margin="0 10 0 0"/>
-					<TextBox x:Name="txtEmail" Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
+                    <!-- Email -->
+                    <TextBlock Text="Email:" Grid.Row="3" FontWeight="Bold" Margin="0 10 0 0"/>
+                    <TextBox x:Name="txtEmail" Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
 
-					<!-- Telefone -->
-					<TextBlock Text="Telefone:" Grid.Row="4" FontWeight="Bold" Margin="0 10 0 0"/>
-					<TextBox x:Name="txtTelefone" Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
+                    <!-- Telefone -->
+                    <TextBlock Text="Telefone:" Grid.Row="4" FontWeight="Bold" Margin="0 10 0 0"/>
+                    <TextBox x:Name="txtTelefone" Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
 
-					<!-- Dias Disponíveis -->
-					<TextBlock Text="Dias Disponíveis:" Grid.Row="5" FontWeight="Bold" Margin="0 10 0 0"/>
-					<ComboBox x:Name="cmb2DiasDisponiveis" Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Width="200">
-						<ComboBoxItem Content="Segunda-feira"/>
-						<ComboBoxItem Content="Terça-feira"/>
-						<ComboBoxItem Content="Quarta-feira"/>
-						<ComboBoxItem Content="Quinta-feira"/>
-						<ComboBoxItem Content="Sexta-feira"/>
-					</ComboBox>
+                    <!-- Dias Disponíveis -->
+                    <TextBlock Text="Dias Disponíveis:" Grid.Row="5" FontWeight="Bold" Margin="0 10 0 0"/>
+                    <ComboBox x:Name="cmb2DiasDisponiveis" Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Width="200">
+                        <ComboBoxItem Content="Segunda-feira"/>
+                        <ComboBoxItem Content="Terça-feira"/>
+                        <ComboBoxItem Content="Quarta-feira"/>
+                        <ComboBoxItem Content="Quinta-feira"/>
+                        <ComboBoxItem Content="Sexta-feira"/>
+                    </ComboBox>
 
-					<!-- Horas Disponíveis -->
-					<TextBlock Text="Horas Disponíveis:" Grid.Row="6" FontWeight="Bold" Margin="0 10 0 0"/>
-					<ComboBox x:Name="cmbHorasDisponiveis" Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Width="200">
-						<ComboBoxItem Content="Manhã"/>
-						<ComboBoxItem Content="Meio-dia"/>
-						<ComboBoxItem Content="Tarde"/>
-						<ComboBoxItem Content="Noite"/>
-					</ComboBox>
+                    <!-- Horas Disponíveis -->
+                    <TextBlock Text="Horas Disponíveis:" Grid.Row="6" FontWeight="Bold" Margin="0 10 0 0"/>
+                    <ComboBox x:Name="cmbHorasDisponiveis" Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Width="200">
+                        <ComboBoxItem Content="Manhã"/>
+                        <ComboBoxItem Content="Meio-dia"/>
+                        <ComboBoxItem Content="Tarde"/>
+                        <ComboBoxItem Content="Noite"/>
+                    </ComboBox>
 
-					<!-- Tipo de Consulta -->
-					<TextBlock Text="Tipo de Consulta:" Grid.Row="7" FontWeight="Bold" Margin="0 10 0 0"/>
-					<ComboBox x:Name="cmb2TipoConsulta" Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Width="200">
-						<ComboBoxItem Content="Checkup"/>
-						<ComboBoxItem Content="Limpeza"/>
-						<ComboBoxItem Content="Dor"/>
-						<ComboBoxItem Content="Consulta"/>
-						<ComboBoxItem Content="Extração"/>
-					</ComboBox>
+                    <!-- Tipo de Consulta -->
+                    <TextBlock Text="Tipo de Consulta:" Grid.Row="7" FontWeight="Bold" Margin="0 10 0 0"/>
+                    <ComboBox x:Name="cmb2TipoConsulta" Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Width="200">
+                        <ComboBoxItem Content="Checkup"/>
+                        <ComboBoxItem Content="Limpeza"/>
+                        <ComboBoxItem Content="Dor"/>
+                        <ComboBoxItem Content="Consulta"/>
+                        <ComboBoxItem Content="Extração"/>
+                    </ComboBox>
 
-					<!-- Botão de Adicionar Paciente -->
-					<Button Content="Adicionar Paciente" Click="AdicionarPaciente_Click" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0 10 0 0" Background="#007ACC" Foreground="White" Padding="15" FontWeight="Bold" BorderThickness="0"/>
+                    <!-- Botão de Adicionar Paciente -->
+                    <Button Content="Adicionar Paciente" Click="AdicionarPaciente_Click" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0 10 0 0" Background="#007ACC" Foreground="White" Padding="15" FontWeight="Bold" BorderThickness="0"/>
 
-					<!-- Novo Paciente -->
-					<TextBlock Text="Novo Paciente?" Grid.Row="8" FontWeight="Bold" Margin="0 10 0 0"/>
-					<CheckBox x:Name="chkNovoPaciente" Grid.Row="8" Grid.ColumnSpan="2" Margin="95 10" FontWeight="Bold"/>
-				</Grid>
-			</TabItem>
-
-
-
-
-		</TabControl>
+                    <!-- Novo Paciente -->
+                    <TextBlock Text="Novo Paciente?" Grid.Row="8" FontWeight="Bold" Margin="0 10 0 0"/>
+                    <CheckBox x:Name="chkNovoPaciente" Grid.Row="8" Grid.ColumnSpan="2" Margin="95 10" FontWeight="Bold"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
 	</Grid>
 </Window>
