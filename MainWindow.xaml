@@ -148,7 +148,7 @@
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Waiting Since" DisplayMemberBinding="{Binding CreatedDate, StringFormat={}{0:MM/dd/yyyy}}">
+								<GridViewColumn Header="Waiting Since" DisplayMemberBinding="{Binding CreatedDate, StringFormat={}{0:dd/MM/yyyy}}">
 									<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
