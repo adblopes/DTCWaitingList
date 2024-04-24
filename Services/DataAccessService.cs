@@ -1,30 +1,38 @@
-﻿using DTCWaitingList.Interface;
+﻿using AutoMapper;
+using DTCWaitingList.Database;
+using DTCWaitingList.Interfaces;
 using DTCWaitingList.Models;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DTCWaitingList.Services
 {
     public class DataAccessService : IDataAccessService
     {
         private readonly WaitingListDb _dbContext;
+        private readonly IMapper _mapper;
 
-        public DataAccessService(WaitingListDb dbContext)
+        public DataAccessService(WaitingListDb dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        public List<Patient> GetPatients()
+        public List<PatientView> GetPatients()
         {
-            return _dbContext.GetPatients();
+            List<Patient> patient = _dbContext.GetPatients();
+
+            List<PatientView> patientView = _mapper.Map<List<Patient>, List<PatientView>>(patient);
+
+            return patientView;
         }
 
-        public async Task AddPatientAsync(Patient patient)
+        public List<Day> GetDays()
         {
-            patient.ReasonId = await ProcessReasonAsync(patient.FullReason);
-
-            var patientId = await _dbContext.AddPatientAsync(patient);
-
-            //await AddAvailabilityAsync(appointmentView, appointmentId);
+            return _dbContext.GetDays();
+        }
+        
+        public List<Time> GetTimes()
+        {
+            return _dbContext.GetTimes();
         }
 
         //public async Task<List<Patient>> GetPatientsAsync(string[]? args)
@@ -33,66 +41,39 @@ namespace DTCWaitingList.Services
         //    return await _dbContext.GetPatientsAsync();
         //}
 
+
+        public List<Reason> GetReasons()
+        {
+            return _dbContext.GetReasons();
+        }
+
+        public List<ReasonVariant> GetReasonVariants()
+        {
+            return _dbContext.GetReasonVariants();
+        }
+
         public async Task RemovePatientAsync(int id)
         {
-            var appointment = await _dbContext.GetPatientByIdAsync(id);
-            if (appointment != null)
+            var patient = await _dbContext.GetPatientByIdAsync(id);
+            if (patient != null)
             {
-                await _dbContext.RemovePatientAsync(id);
+                var patientHistory = _mapper.Map<Patient, PatientHistory>(patient);
+                await _dbContext.RemovePatientAsync(patient, patientHistory);
             }
         }
 
-        public async Task<List<Reason>> GetReasonsAsync()
+        public async Task AddPatientAsync(PatientView patientView)
         {
-            return await _dbContext.GetReasonsAsync();
-        }
-        
-        public async Task<List<ReasonVariant>> GetReasonVariantsAsync()
-        {
-            return await _dbContext.GetReasonVariantsAsync();
-        }
-
-        private async Task<int> ProcessReasonAsync(string? fullReason)
-        {
-            var reasons = await GetReasonsAsync();
-            var variants = await GetReasonVariantsAsync();
-            int result = reasons.First().ReasonId;
-
-            if (!fullReason.IsNullOrEmpty())
+            try
             {
-                var data = variants.FirstOrDefault(r => fullReason!.Contains(r.Term!, StringComparison.CurrentCultureIgnoreCase));
+                Patient patient = _mapper.Map<PatientView, Patient>(patientView);
 
-                if (data != null)
-                {        
-                    result = reasons.Find(r => r.ReasonId == data.ReasonId)!.ReasonId;
-                }
-            
+                await _dbContext.AddPatientAsync(patient);
             }
-
-            return result;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-
-        //private async Task AddAvailabilityAsync(AppointmentView appointmentView, int appointmentId)
-        //{
-        //    if (appointmentView.DayOfWeek == null)
-        //    {
-        //        appointmentView.DayOfWeek = ["Any Day"];
-        //    }
-        //    if (appointmentView.TimeOfDay == null)
-        //    {
-        //        appointmentView.TimeOfDay = ["Any Time"];
-
-        //    }
-
-        //    foreach (string day in appointmentView.DayOfWeek!)
-        //    {
-        //        await _dbContext.AddPatientDayAsync(appointmentId, day);
-        //    }
-
-        //    foreach (string time in appointmentView.TimeOfDay!)
-        //    {
-        //        await _dbContext.AddPatientTimeAsync(appointmentId, time);
-        //    }
-        //}
     }
 }

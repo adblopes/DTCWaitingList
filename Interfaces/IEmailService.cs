@@ -1,7 +1,7 @@
 ﻿using DTCWaitingList.Models;
 using Google.Apis.Gmail.v1.Data;
 
-namespace DTCWaitingList.Interface
+namespace DTCWaitingList.Interfaces
 {
     //since there's no API to call, appointments are read from templated gmail messages
     public interface IEmailService
@@ -10,7 +10,7 @@ namespace DTCWaitingList.Interface
         Task SendEmailAsync(string userEmail, string userName);
 
         //read and process appointment email, returning a new Patient object 
-        Patient ReadEmail(string messageId);
+        PatientView ReadEmail(string messageId);
 
         //read, reply and trash unread gmail messages
         Task ProcessInboxUnreadAsync();

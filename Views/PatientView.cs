@@ -1,9 +1,8 @@
 ﻿namespace DTCWaitingList.Models
 {
-    public class Patient
+    public class PatientView
     {
         public int? PatientId { get; set; }
-
         public string? FullName { get; set; }
 
         public string? Email { get; set; }
@@ -14,14 +13,12 @@
 
         public bool IsClient { get; set; }
         
-        public int ReasonId { get; set; }
-
-        public Reason? Reason { get; set; }
+        public string? Reason { get; set; }
 
         public DateTime? CreatedDate { get; set; }
 
-        public IList<PatientDay>? PatientDays { get; set; }
+        public IList<string>? PatientDays { get; set; }
 
-        public IList<PatientTime>? PatientTimes { get; set; }
+        public IList<string>? PatientTimes { get; set; }
     }
 }

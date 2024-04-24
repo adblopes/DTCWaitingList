@@ -7,7 +7,7 @@
 		xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
 		mc:Ignorable="d"
 		Icon="Resources/agenda.ico"
-		Title="Pacientes em Lista de Espera" Height="500" Width="800">
+		Title="Dental Treatment Center Waiting List" Height="500" Width="800">
 	<Window.Resources>
 		<Style x:Key="PrimaryButtonStyle" TargetType="Button">
 			<Setter Property="Background" Value="#007ACC"/>
@@ -69,25 +69,14 @@
 						<ListView.View>
 							<GridView>
 								<!-- Definindo as colunas da tabela -->
-								
-								<GridViewColumn Header="Nome" DisplayMemberBinding="{Binding Nome}">
+
+								<GridViewColumn Header="Name" DisplayMemberBinding="{Binding FullName}">
 									<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Nome"/>
+												<TextBlock Text="Name"/>
 												<Button Content="▲" Click="OrdenarNomeAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 												<Button Content="▼" Click="OrdenarNomeDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Apelido" DisplayMemberBinding="{Binding Apelido}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Apelido"/>
-												<Button Content="▲" Click="OrdenarApelidoAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
-												<Button Content="▼" Click="OrdenarApelidoDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
@@ -103,66 +92,66 @@
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Telefone" DisplayMemberBinding="{Binding Telefone}">
+								<GridViewColumn Header="Phone" DisplayMemberBinding="{Binding Phone}">
 									<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Telefone"/>
+												<TextBlock Text="Phone"/>
 												<Button Content="▲" Click="OrdenarTelefoneAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 												<Button Content="▼" Click="OrdenarTelefoneDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Dias Disponíveis" DisplayMemberBinding="{Binding DiasDisponiveis}">
+								<GridViewColumn Header="Available Days" DisplayMemberBinding="{Binding AvailableDays}">
 									<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Dias Disponíveis"/>
+												<TextBlock Text="Available Days"/>
 												<Button Content="▲" Click="OrdenarDiasDisponiveisAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 												<Button Content="▼" Click="OrdenarDiasDisponiveisDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Horas Disponíveis" DisplayMemberBinding="{Binding HorasDisponíveis}">
+								<GridViewColumn Header="Available Timeslots" DisplayMemberBinding="{Binding AvailableTimes}">
 									<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Horas Disponíveis"/>
+												<TextBlock Text="Available Timeslots"/>
 												<Button Content="▲" Click="OrdenarHorasDisponiveisAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 												<Button Content="▼" Click="OrdenarHorasDisponiveisDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Tipo de Consulta" DisplayMemberBinding="{Binding TipoConsulta}">
+								<GridViewColumn Header="Type" DisplayMemberBinding="{Binding Reason}">
 									<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Tipo de Consulta"/>
+												<TextBlock Text="Type"/>
 												<Button Content="▲" Click="OrdenarTipoConsultaAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 												<Button Content="▼" Click="OrdenarTipoConsultaDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Novo Paciente" DisplayMemberBinding="{Binding NovoPaciente}">
+								<GridViewColumn Header="Current Patient" DisplayMemberBinding="{Binding IsClient}">
 									<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Novo Paciente"/>
+												<TextBlock Text="Current Patient"/>
 												<Button Content="▲" Click="OrdenarNovoPacienteAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 												<Button Content="▼" Click="OrdenarNovoPacienteDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.HeaderTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Data de Entrada na Fila de Espera" DisplayMemberBinding="{Binding DataEntradaFilaEspera}">
+								<GridViewColumn Header="Waiting Since" DisplayMemberBinding="{Binding CreatedDate}">
 									<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Data de Entrada na Fila de Espera"/>
+												<TextBlock Text="Waiting Since"/>
 												<ui:Button Content="▲" Click="OrdenarDataEntradaFilaEsperaAscendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 												<ui:Button Content="▼" Click="OrdenarDataEntradaFilaEsperaDescendente_Click" Style="{StaticResource SmallButtonStyle}"/>
 											</StackPanel>
@@ -170,10 +159,10 @@
 									</GridViewColumn.HeaderTemplate>
 								</GridViewColumn>
 								<!-- Botão de remoção -->
-								<GridViewColumn Header="Remover">
+								<GridViewColumn Header="Remove">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
-											<ui:Button Content="Remover" Click="RemoverPaciente_Click"/>
+											<ui:Button Content="Remove" Click="RemoverPaciente_Click"/>
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>

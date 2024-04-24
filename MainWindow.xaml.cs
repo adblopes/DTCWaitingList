@@ -1,4 +1,4 @@
-﻿using DTCWaitingList.Interface;
+﻿using DTCWaitingList.Interfaces;
 using DTCWaitingList.Models;
 using System.ComponentModel;
 using System.Windows;
@@ -13,7 +13,7 @@ namespace DTCWaitingList
     public partial class MainWindow : Window
     {
         private readonly IDataAccessService? _data;
-        public IEnumerable<Patient>? Results { get; set; }
+        public IEnumerable<PatientView>? Results { get; set; }
         public NotifyIcon? notifyIcon { get; set; }
 
         public MainWindow(IDataAccessService data)
@@ -33,17 +33,7 @@ namespace DTCWaitingList
         {
             Results = _data!.GetPatients();
 
-            //prevent different thread exception by blocking calling thread
-            //Dispatcher.Invoke(() =>
-            //{
-                listView.ItemsSource = Results;
-            //});
-        }
-
-        private void Window_Closing(object sender, CancelEventArgs e)
-        {
-            e.Cancel = true;
-            Hide();
+            listView.ItemsSource = Results;
         }
 
         private void OrdenarNomeAscendente_Click(object sender, RoutedEventArgs e)
@@ -105,7 +95,7 @@ namespace DTCWaitingList
 
         private void AdicionarPaciente_Click(object sender, RoutedEventArgs e)
         {
-            Patient novoPaciente = new Patient
+            PatientView novoPaciente = new PatientView
             {
                 //Nome = txtNome.Text,
                 //Apelido = txtApelido.Text,

@@ -5,7 +5,7 @@ using Google.Apis.Gmail.v1.Data;
 using System.Text;
 using MimeKit;
 using System.IO;
-using DTCWaitingList.Interface;
+using DTCWaitingList.Interfaces;
 using System.Reflection;
 using MimeKit.Utils;
 using DTCWaitingList.Models;
@@ -70,9 +70,9 @@ namespace DTCWaitingList.Services
             }
         }
 
-        public Patient ReadEmail(string messageId)
+        public PatientView ReadEmail(string messageId)
         {
-            Patient appointment = new();
+            PatientView patientView = new();
 
             try
             {
@@ -93,11 +93,11 @@ namespace DTCWaitingList.Services
                     Times = "Preferred time(s) for an appointment?",
                 };
 
-                appointment.FullName = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Name) + emailParams.Name.Length, decodedMessage.IndexOf(emailParams.Email) - decodedMessage.IndexOf(emailParams.Name) - emailParams.Name.Length).Trim();
-                appointment.Email = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Email) + emailParams.Email.Length, decodedMessage.IndexOf(emailParams.Phone) - decodedMessage.IndexOf(emailParams.Email) - emailParams.Email.Length).Trim();
-                appointment.Phone = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Phone) + emailParams.Phone.Length, decodedMessage.IndexOf("Are you") - decodedMessage.IndexOf(emailParams.Phone) - emailParams.Phone.Length).Trim();
-                appointment.IsClient = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Current) + emailParams.Current.Length, decodedMessage.IndexOf(emailParams.Days) - decodedMessage.IndexOf(emailParams.Current) - emailParams.Current.Length).Trim() == "Yes";
-                appointment.FullReason = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Comment) + emailParams.Comment.Length, decodedMessage.IndexOf("SID:") - decodedMessage.IndexOf(emailParams.Comment) - emailParams.Comment.Length).Trim();
+                patientView.FullName = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Name) + emailParams.Name.Length, decodedMessage.IndexOf(emailParams.Email) - decodedMessage.IndexOf(emailParams.Name) - emailParams.Name.Length).Trim();
+                patientView.Email = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Email) + emailParams.Email.Length, decodedMessage.IndexOf(emailParams.Phone) - decodedMessage.IndexOf(emailParams.Email) - emailParams.Email.Length).Trim();
+                patientView.Phone = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Phone) + emailParams.Phone.Length, decodedMessage.IndexOf("Are you") - decodedMessage.IndexOf(emailParams.Phone) - emailParams.Phone.Length).Trim();
+                patientView.IsClient = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Current) + emailParams.Current.Length, decodedMessage.IndexOf(emailParams.Days) - decodedMessage.IndexOf(emailParams.Current) - emailParams.Current.Length).Trim() == "Yes";
+                patientView.FullReason = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Comment) + emailParams.Comment.Length, decodedMessage.IndexOf("SID:") - decodedMessage.IndexOf(emailParams.Comment) - emailParams.Comment.Length).Trim();
 
                 var days = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Days) + emailParams.Days.Length, decodedMessage.IndexOf(emailParams.Times) - decodedMessage.IndexOf(emailParams.Days) - emailParams.Days.Length).Replace("\r\n", string.Empty).Trim();
                 var times = decodedMessage.Substring(decodedMessage.IndexOf(emailParams.Times) + emailParams.Times.Length, decodedMessage.IndexOf(emailParams.Comment) - decodedMessage.IndexOf(emailParams.Times) - emailParams.Times.Length).Replace("\r\n", string.Empty).Trim();
@@ -105,23 +105,23 @@ namespace DTCWaitingList.Services
                 var tempDays = days.Contains("Any Day") ? [days] : days.Split(" ");
                 var tempTimes = times.Contains("Any Day") ? [times] : times.Split(" ");
 
-                appointment.PatientDays = new List<PatientDay>();
-                appointment.PatientTimes = new List<PatientTime>();
+                patientView.PatientDays = new List<string>();
+                patientView.PatientTimes = new List<string>();
 
                 foreach (var day in tempDays)
                 {
-                    appointment.PatientDays.Add(new PatientDay { Day = new Day { NameOfDay = day} });
+                    patientView.PatientDays.Add(day);
                 }
                 foreach (var time in tempTimes)
                 {
-                    appointment.PatientTimes.Add(new PatientTime { Time = new Time { TimeOfDay = time} });
+                    patientView.PatientTimes.Add(time);
                 }
 
                 //if gmail doesn't return the date (in unix time milliseconds) just add today's date
                 var gmailDate = message.InternalDate ?? DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                appointment.CreatedDate = DateTimeOffset.FromUnixTimeMilliseconds(gmailDate + (long)TimeSpan.FromMinutes(60).TotalMilliseconds).DateTime;
+                patientView.CreatedDate = DateTimeOffset.FromUnixTimeMilliseconds(gmailDate + (long)TimeSpan.FromMinutes(60).TotalMilliseconds).DateTime;
 
-                return appointment;
+                return patientView;
             }
             catch (Exception ex)
             {
@@ -137,13 +137,13 @@ namespace DTCWaitingList.Services
 
             foreach (var message in messages)
             {
-                var appointment = ReadEmail(message.Id);
+                var patientView = ReadEmail(message.Id);
 
-                if (appointment != null)
+                if (patientView != null)
                 {
-                    await _data.AddPatientAsync(appointment);
-                    await SendEmailAsync("adiogo.blopes@gmail.com", appointment.FullName!);  // <------ appointment.Email
-                    await DeleteEmailAsync(message.Id);
+                    await _data.AddPatientAsync(patientView);
+                    //await SendEmailAsync("adiogo.blopes@gmail.com", appointment.FullName!);  // <------ appointment.Email
+                    //await DeleteEmailAsync(message.Id);
                 }
             }
         }
@@ -160,8 +160,12 @@ namespace DTCWaitingList.Services
                 try
                 {
                     ListMessagesResponse response = request.Execute();
-                    result.AddRange(response.Messages);
-                    request.PageToken = response.NextPageToken;
+
+                    if (response.Messages != null)
+                    {
+                        result.AddRange(response.Messages);
+                        request.PageToken = response.NextPageToken;
+                    }
                 }
                 catch (Exception e)
                 {

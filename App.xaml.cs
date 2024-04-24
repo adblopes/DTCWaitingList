@@ -1,4 +1,5 @@
-﻿using DTCWaitingList.Interface;
+﻿using DTCWaitingList.Database;
+using DTCWaitingList.Interfaces;
 using DTCWaitingList.Services;
 using Google.Apis.Gmail.v1;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace DTCWaitingList
             {
                 services.AddSingleton<IEmailService, EmailService>();
                 services.AddSingleton<GmailService>();
+                services.AddAutoMapper(typeof(App));
                 services.AddScoped<IDataAccessService, DataAccessService>();
                 services.AddDbContext<WaitingListDb>(options =>
                     options.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=DTCWaitingList;Trusted_Connection=True;TrustServerCertificate=True"),
@@ -56,8 +58,11 @@ namespace DTCWaitingList
 
                 try
                 {
-                    Current.MainWindow = new MainWindow(dataAccessService!);
-                    Current.MainWindow.Show();
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Current.MainWindow = new MainWindow(dataAccessService!);
+                        Current.MainWindow.Show();
+                    });
                 }
                 catch (Exception ex)
                 {

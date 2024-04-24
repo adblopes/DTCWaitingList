@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace DTCWaitingList
+namespace DTCWaitingList.Database
 {
     public class WaitingListDb : DbContext
     {
@@ -25,29 +25,29 @@ namespace DTCWaitingList
             modelBuilder.Entity<PatientDay>().HasKey(sc => new { sc.PatientId, sc.DayId });
 
             modelBuilder.Entity<PatientDay>()
-                .HasOne<Patient>(pd => pd.Patient)
+                .HasOne(pd => pd.Patient)
                 .WithMany(p => p.PatientDays)
                 .HasForeignKey(pd => pd.PatientId);
 
             modelBuilder.Entity<PatientDay>()
-                .HasOne<Day>(pd => pd.Day)
+                .HasOne(pd => pd.Day)
                 .WithMany(p => p.PatientDays)
                 .HasForeignKey(pd => pd.DayId);
 
             modelBuilder.Entity<PatientTime>().HasKey(sc => new { sc.PatientId, sc.TimeId });
 
             modelBuilder.Entity<PatientTime>()
-                .HasOne<Patient>(pd => pd.Patient)
+                .HasOne(pd => pd.Patient)
                 .WithMany(p => p.PatientTimes)
                 .HasForeignKey(pd => pd.PatientId);
 
             modelBuilder.Entity<PatientTime>()
-                .HasOne<Time>(pd => pd.Time)
+                .HasOne(pd => pd.Time)
                 .WithMany(p => p.PatientTimes)
                 .HasForeignKey(pd => pd.TimeId);
 
             modelBuilder.Entity<Reason>()
-                .HasMany<Patient>(pd => pd.Patients)
+                .HasMany(pd => pd.Patients)
                 .WithOne(p => p.Reason)
                 .HasForeignKey(pd => pd.ReasonId);
 
@@ -62,11 +62,32 @@ namespace DTCWaitingList
                 .HasKey(sc => new { sc.PatientId });
         }
 
-        //https://learn.microsoft.com/en-us/ef/core/miscellaneous/async
-        //known issues with async queries
         public List<Patient> GetPatients()
         {
+            //retrieve day and time names to fill in the view later, possible async issue
+            var days = Days;
+            var times = Times;
             return Patients.Include(p => p.PatientDays).Include(p => p.PatientTimes).Include(p => p.Reason).ToList();
+        }
+
+        public List<Day> GetDays()
+        {
+            return [.. Days];
+        }
+
+        public List<Time> GetTimes()
+        {
+            return [.. Times];
+        }
+
+        public List<Reason> GetReasons()
+        {
+            return [.. Reasons];
+        }
+
+        public List<ReasonVariant> GetReasonVariants()
+        {
+            return [.. ReasonVariants];
         }
 
         public async Task<Patient?> GetPatientByIdAsync(int patientId)
@@ -89,48 +110,17 @@ namespace DTCWaitingList
             return null;
         }
 
-        public async Task<int> AddPatientAsync(Patient patient)
+        public async Task AddPatientAsync(Patient patient)
         {
             await Patients.AddAsync(patient);
             await SaveChangesAsync();
-
-            return (int)patient.PatientId!;
         }
 
-        public async Task RemovePatientAsync(int patientId)
+        public async Task RemovePatientAsync(Patient patient, PatientHistory patientHistory)
         {
-            var patient = await GetPatientByIdAsync(patientId);
-            
-            if (patient != null)
-            {
-                Patients.Remove(patient);
-                //await PatientsHistory.AddAsync(appointment);
-
-                //PatientDays.RemoveRange(PatientDays.Where(x => x.PatientId == appointmentId));
-                //PatientTimes.RemoveRange(PatientTimes.Where(x => x.PatientId == appointmentId));
-
-                await SaveChangesAsync();
-            }
-        }
-
-        public async Task<List<Reason>> GetReasonsAsync()
-        {
-            return await Reasons.ToListAsync();
-        }
-        
-        public async Task<List<ReasonVariant>> GetReasonVariantsAsync()
-        {
-            return await ReasonVariants.ToListAsync();
-        }
-
-        public async Task<List<Day>> GetWeekdaysAsync()
-        {
-            return await Days.ToListAsync();
-        }
-
-        public async Task<List<Time>> GetTimesAsync()
-        {
-            return await Times.ToListAsync();
+            Patients.Remove(patient);
+            await PatientsHistory.AddAsync(patientHistory);
+            await SaveChangesAsync();
         }
     }
 }
