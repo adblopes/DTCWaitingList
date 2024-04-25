@@ -56,7 +56,7 @@
 	<Grid Background="#F0F0F0">
 		<TabControl Name="tabControl">
 			<!-- First Tab "Results" -->
-			<TabItem Header="Resultados">
+			<TabItem Header="Results">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
@@ -166,7 +166,7 @@
 			</TabItem>
 
 			<!-- Second Tab "Search Patient" -->
-			<TabItem Header="Pesquisa">
+			<TabItem Header="Search Patients">
 				<Grid>
 					<StackPanel Margin="10">
 						<TextBlock Text="Available Days" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
