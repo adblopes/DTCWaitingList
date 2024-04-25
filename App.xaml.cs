@@ -4,7 +4,6 @@ using DTCWaitingList.Services;
 using Google.Apis.Gmail.v1;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System.Windows;
 
 
@@ -15,60 +14,30 @@ namespace DTCWaitingList
     /// </summary>
     public partial class App : Application
     {
+        public IServiceProvider Services { get; set; }
+
+        public new static App Current => (App)Application.Current;
+
         public App()
         {
-            InitializeAppAsync();
+            Services = ConfigureServices();
+            IEmailService emailService = App.Current.Services.GetService<IEmailService>()!;
+            emailService.ProcessInboxUnreadAsync();
         }
 
-        public async void InitializeAppAsync()
+        private static IServiceProvider ConfigureServices()
         {
-            using IHost host = Host.CreateDefaultBuilder()
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<IEmailService, EmailService>();
-                services.AddSingleton<GmailService>();
-                services.AddAutoMapper(typeof(App));
-                services.AddScoped<IDataAccessService, DataAccessService>();
-                services.AddDbContext<WaitingListDb>(options =>
-                    options.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=DTCWaitingList;Trusted_Connection=True;TrustServerCertificate=True"),
-                    ServiceLifetime.Scoped);
-            })
-            .Build();
+            var services = new ServiceCollection();
 
-            await RunAsync(host.Services);
-        }
+            services.AddSingleton<IEmailService, EmailService>();
+            services.AddSingleton<GmailService>();
+            services.AddAutoMapper(typeof(App));
+            services.AddSingleton<IDataAccessService, DataAccessService>();
+            services.AddDbContext<WaitingListDb>(options =>
+                options.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=DTCWaitingList;Trusted_Connection=True;TrustServerCertificate=True"),
+                ServiceLifetime.Scoped, optionsLifetime: ServiceLifetime.Singleton);
 
-        static async Task RunAsync(IServiceProvider host)
-        {
-            using (IServiceScope serviceScope = host.CreateScope())
-            {
-                IServiceProvider provider = serviceScope.ServiceProvider;
-
-                var dataAccessService = provider.GetService<IDataAccessService>();
-                var emailService = provider.GetService<IEmailService>();
-
-                try
-                {
-                    await emailService!.ProcessInboxUnreadAsync();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error processing inbox: {ex.Message}");
-                }
-
-                try
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Current.MainWindow = new MainWindow(dataAccessService!);
-                        Current.MainWindow.Show();
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error creating/showing main window: {ex.Message}");
-                }
-            }
+            return services.BuildServiceProvider();
         }
     }
 }

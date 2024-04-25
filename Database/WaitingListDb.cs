@@ -72,12 +72,12 @@ namespace DTCWaitingList.Database
 
             foreach (Patient patient in patients)
             {
-                foreach (PatientDay pd in patient.PatientDays)
+                foreach (PatientDay pd in patient.PatientDays!)
                 {
                     pd.Day = days.First(d => d.DayId == pd.DayId);
                 }
 
-                foreach (PatientTime pt in patient.PatientTimes)
+                foreach (PatientTime pt in patient.PatientTimes!)
                 {
                     pt.Time = times.First(t => t.TimeId == pt.TimeId);
                 }
@@ -106,9 +106,14 @@ namespace DTCWaitingList.Database
             return [.. ReasonVariants];
         }
 
-        public async Task<Patient?> GetPatientByIdAsync(int patientId)
+        public Patient GetPatientById(int patientId)
         {
-            var patient = await Patients.FirstOrDefaultAsync(e => e.PatientId == patientId);
+            var patient = Patients.FirstOrDefault(e => e.PatientId == patientId);
+
+            if (patient == null)
+            {
+                throw new ArgumentException("The patient is no longer in the database, please refresh the search results.");
+            }
 
             return patient;
         }
@@ -126,17 +131,22 @@ namespace DTCWaitingList.Database
             return null;
         }
 
-        public async Task AddPatientAsync(Patient patient)
+        public void AddPatient(Patient patient)
         {
-            await Patients.AddAsync(patient);
-            await SaveChangesAsync();
+            Patients.Add(patient);
+            SaveChanges();
         }
 
-        public async Task RemovePatientAsync(Patient patient, PatientHistory patientHistory)
+        public void AddPatientHistory(PatientHistory patient)
+        {
+            PatientsHistory.AddAsync(patient);
+            SaveChanges();
+        }
+
+        public void RemovePatient(Patient patient)
         {
             Patients.Remove(patient);
-            await PatientsHistory.AddAsync(patientHistory);
-            await SaveChangesAsync();
+            SaveChanges();
         }
     }
 }

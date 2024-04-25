@@ -5,7 +5,7 @@ using DTCWaitingList.Models;
 
 namespace DTCWaitingList.Mapping
 {
-    public class StringToPatientTimeListResolver : IValueResolver<PatientView, Patient, IList<PatientTime>>
+    public class StringToPatientTimeListResolver : IValueResolver<PatientView, Patient, IList<PatientTime>?>
     {
         private readonly IDataAccessService _data;
 
@@ -14,13 +14,13 @@ namespace DTCWaitingList.Mapping
             _data = data;
         }
 
-        public IList<PatientTime> Resolve(PatientView source, Patient destination, IList<PatientTime> destMember, ResolutionContext context)
+        public IList<PatientTime>? Resolve(PatientView source, Patient destination, IList<PatientTime>? destMember, ResolutionContext context)
         {
             var timeNames = source.PatientTimes;
             var patientTimes = new List<PatientTime>();
             var times = _data.GetTimes();
 
-            foreach (var timeName in timeNames)
+            foreach (var timeName in timeNames!)
             {
                 var patientTime = new PatientTime
                 {

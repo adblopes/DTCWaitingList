@@ -5,7 +5,7 @@ using DTCWaitingList.Models;
 
 namespace DTCWaitingList.Mapping
 {
-    public class StringToPatientDayListResolver : IValueResolver<PatientView, Patient, IList<PatientDay>>
+    public class StringToPatientDayListResolver : IValueResolver<PatientView, Patient, IList<PatientDay>?>
     {
         private readonly IDataAccessService _data;
 
@@ -14,13 +14,13 @@ namespace DTCWaitingList.Mapping
             _data = data;
         }
 
-        public IList<PatientDay> Resolve(PatientView source, Patient destination, IList<PatientDay> destMember, ResolutionContext context)
+        public IList<PatientDay>? Resolve(PatientView source, Patient destination, IList<PatientDay>? destMember, ResolutionContext context)
         {
             var dayNames = source.PatientDays;
             var patientDays = new List<PatientDay>();
             var days = _data.GetDays();
 
-            foreach (var dayName in dayNames)
+            foreach (var dayName in dayNames!)
             {
                 var patientDay = new PatientDay
                 {

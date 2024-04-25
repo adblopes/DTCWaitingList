@@ -138,11 +138,10 @@ namespace DTCWaitingList.Services
             foreach (var message in messages)
             {
                 var patientView = ReadEmail(message.Id);
-
                 if (patientView != null)
                 {
-                    await _data.AddPatientAsync(patientView);
-                    //await SendEmailAsync("adiogo.blopes@gmail.com", appointment.FullName!);  // <------ appointment.Email
+                    _data.AddPatient(patientView);
+                    //await SendEmailAsync("adiogo.blopes@gmail.com", patientView.FullName!);  // <------ appointment.Email
                     //await DeleteEmailAsync(message.Id);
                 }
             }

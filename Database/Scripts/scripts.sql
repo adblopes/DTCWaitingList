@@ -25,13 +25,13 @@ CREATE TABLE Patients (
 	FOREIGN KEY (ReasonId) REFERENCES dbo.Reasons(ReasonId))
 GO
 
-CREATE TABLE Patients_History (
-	PatientId int PRIMARY KEY NOT NULL IDENTITY,
+CREATE TABLE PatientsHistory (
+	PatientId int PRIMARY KEY NOT NULL,
 	FullName nvarchar(70) NOT NULL,
 	Email nvarchar(255) NOT NULL,
 	Phone nvarchar(15) NOT NULL,
 	FullReason nvarchar(500) NULL,
-	Reason int NOT NULL,
+	ReasonId int NOT NULL,
 	IsClient bit NOT NULL,
 	CreatedDate Date NOT NULL,
 	DeletedDate Date NOT NULL)
@@ -86,6 +86,7 @@ GO
 INSERT INTO [dbo].[Reasons]
 		   ([ReasonName])
 	 VALUES
+	 	   ('No valid reason'),
 		   ('Checkup'),
 		   ('Cleaning'),
 		   ('Pain')
@@ -95,24 +96,24 @@ INSERT INTO [dbo].[ReasonVariants]
 		   ([Term]
 		   ,[ReasonId])
 	 VALUES
-		   ('Check-up', 1),
-		   ('Check up', 1),
-		   ('Checkup', 1),
-		   ('Cleaning', 2),
-		   ('Detartage', 2),
-		   ('Détartage', 2),
-		   ('Détártáge', 2),
-		   ('Détártage', 2),
-		   ('Dètartage', 2),
-		   ('Dètártáge', 2),
-		   ('Dètártàge', 2),
-		   ('Dètàrtàge', 2),
-		   ('Detartage', 2),
-		   ('d?tartrage', 2),
-		   ('nettoyage', 2),
-		   ('Pain', 3),
-		   ('douleur', 3),
-		   ('douleurs', 3)
+		   ('Check-up', 2),
+		   ('Check up', 2),
+		   ('Checkup', 2),
+		   ('Cleaning', 3),
+		   ('Detartage', 3),
+		   ('Détartage', 3),
+		   ('Détártáge', 3),
+		   ('Détártage', 3),
+		   ('Dètartage', 3),
+		   ('Dètártáge', 3),
+		   ('Dètártàge', 3),
+		   ('Dètàrtàge', 3),
+		   ('Detartage', 3),
+		   ('d?tartrage', 3),
+		   ('nettoyage', 3),
+		   ('Pain', 4),
+		   ('douleur', 4),
+		   ('douleurs', 4)
 GO
 
 INSERT INTO [dbo].[Patients]

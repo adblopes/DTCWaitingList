@@ -19,6 +19,8 @@ namespace DTCWaitingList.Mapping
         {
             var reasons = _data.GetReasons();
             var reasonVariants = _data.GetReasonVariants();
+
+            //in case no valid reason is found, insert first reason in list ("no valid reason")
             int result = reasons.First().ReasonId;
 
             if (!source.FullReason.IsNullOrEmpty())

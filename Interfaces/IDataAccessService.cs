@@ -15,8 +15,8 @@ namespace DTCWaitingList.Interfaces
 
         public List<ReasonVariant> GetReasonVariants();
 
-        public Task RemovePatientAsync(int id);
+        public void RemovePatient(int id);
 
-        public Task AddPatientAsync(PatientView patientView);
+        public void AddPatient(PatientView patientView);
     }
 }

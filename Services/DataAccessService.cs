@@ -53,27 +53,27 @@ namespace DTCWaitingList.Services
             return _dbContext.GetReasonVariants();
         }
 
-        public async Task RemovePatientAsync(int id)
+        public void RemovePatient(int id)
         {
-            var patient = await _dbContext.GetPatientByIdAsync(id);
+            var patient = _dbContext.GetPatientById(id);
             if (patient != null)
             {
                 var patientHistory = _mapper.Map<Patient, PatientHistory>(patient);
-                await _dbContext.RemovePatientAsync(patient, patientHistory);
+                _dbContext.AddPatientHistory(patientHistory);
+                _dbContext.RemovePatient(patient);
             }
         }
 
-        public async Task AddPatientAsync(PatientView patientView)
+        public void AddPatient(PatientView patientView)
         {
             try
             {
                 Patient patient = _mapper.Map<PatientView, Patient>(patientView);
-
-                await _dbContext.AddPatientAsync(patient);
+                _dbContext.AddPatient(patient);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new AutoMapperMappingException(ex.Message);
             }
         }
     }
