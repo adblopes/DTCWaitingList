@@ -78,9 +78,7 @@ INSERT INTO [dbo].[Days]
 		   ('Tuesday'),
 		   ('Wednesday'),
 		   ('Thursday'),
-		   ('Friday'),
-		   ('Saturday'),
-		   ('Sunday')
+		   ('Friday')
 GO
 
 INSERT INTO [dbo].[Reasons]

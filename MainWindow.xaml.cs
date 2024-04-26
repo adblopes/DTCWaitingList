@@ -14,6 +14,7 @@ using Button = System.Windows.Controls.Button;
 using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using DTCWaitingList.Database.Models;
 
 namespace DTCWaitingList
 {
@@ -92,14 +93,41 @@ namespace DTCWaitingList
                 FullName = txtFullName.Text,
                 Email = txtEmail.Text,
                 Phone = txtPhone.Text,
-                PatientDays = (IList<string>)lb2Days.SelectedItems,
-                PatientTimes = (IList<string>)lb2Times.SelectedItems,
-                Reason = (string)cmb2Types.SelectedItem,
+                PatientDays = new List<string>(),
+                PatientTimes = new List<string>(),
                 IsClient = chkNewPatient.IsChecked!.Value,
+                CreatedDate = DateTime.Now,
             };
 
-            Results!.Append(newPatient);
-            ClearAddPatientFields();
+            foreach(var item in lb2Days.SelectedItems)
+            {
+                var itemDay = (Database.Models.Day)item;
+                newPatient.PatientDays.Add(itemDay!.NameOfDay!);
+            }
+             
+            foreach(var item in lb2Times.SelectedItems)
+            {
+                var itemTime = (Time)item;
+                newPatient.PatientTimes.Add(itemTime!.TimeOfDay!);
+            }
+
+            var reason = (Reason)cmb2Types.SelectedItem;
+            newPatient.Reason = reason.ReasonName;
+
+            try
+            {
+                _data!.AddPatient(newPatient);
+                ClearAddPatientFields();
+            }
+            catch (Exception ex)
+            {
+                throw new DbUpdateException($"Wasn't able to add patient to database, please check your connection and try again later. Error: {ex.Message}");
+            }
+            finally
+            {
+                Results = _data!.GetPatients();
+                listView.ItemsSource = Results;
+            }
         }
 
         private async void RemovePatient_Click(object sender, RoutedEventArgs e)

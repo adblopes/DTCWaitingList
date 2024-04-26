@@ -200,7 +200,7 @@
 					</StackPanel>
 				</Grid>
 			</TabItem>
-			
+
 			<!-- Third Tab - Add Patient -->
 			<TabItem Header="Add Patient">
 				<Grid Margin="10">
@@ -243,7 +243,7 @@
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 					</ListBox>
-					
+
 					<TextBlock Text="Available Timeslots:" Grid.Row="6" Grid.Column="0"  FontWeight="Bold" Margin="0 10 0 0"/>
 					<ListBox SelectionMode="Multiple" x:Name="lb2Times" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0">
 						<ListBox.ItemsPanel>
@@ -267,10 +267,10 @@
 						</ComboBox.ItemTemplate>
 					</ComboBox>
 
-					<Button Content="Add Patient" Click="AddPacient_Click" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0 10 0 0" Background="#007ACC" Foreground="White" Padding="15" FontWeight="Bold" BorderThickness="0"/>
+					<TextBlock Text="Patient is already a client?" Grid.Row="8" FontWeight="Bold" Margin="0 10 0 0"/>
+					<CheckBox x:Name="chkNewPatient" Grid.Row="8" Margin="199,5,0,0" FontWeight="Bold" VerticalAlignment="Top"/>
 
-					<TextBlock Text="Add Patient?" Grid.Row="8" FontWeight="Bold" Margin="0 10 0 0"/>
-					<CheckBox x:Name="chkNewPatient" Grid.Row="8" Grid.ColumnSpan="2" Margin="95 10" FontWeight="Bold"/>
+					<Button Content="Add Patient" Click="AddPacient_Click" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0 10 0 0" Background="#007ACC" Foreground="White" Padding="15" FontWeight="Bold" BorderThickness="0"/>
 				</Grid>
 			</TabItem>
 		</TabControl>
