@@ -22,6 +22,9 @@ namespace DTCWaitingList
             Services = ConfigureServices();
             IEmailService emailService = App.Current.Services.GetService<IEmailService>()!;
             emailService.ProcessInboxUnreadAsync();
+
+            //run the inbox process method every half hour while the program is active
+            Timer timer = new(async x => await emailService!.ProcessInboxUnreadAsync(), null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
         }
 
         private static IServiceProvider ConfigureServices()

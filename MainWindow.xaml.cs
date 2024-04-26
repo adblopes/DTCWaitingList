@@ -116,46 +116,60 @@ namespace DTCWaitingList
 
         private void AddPacient_Click(object sender, RoutedEventArgs e)
         {
-            var newPatient = new PatientView()
+            if (txtFullName.Text == "" || txtEmail.Text == "" || txtPhone.Text == "" || chkNewPatient.IsChecked == null
+                || lb2Days.SelectedItems.Count == 0 || lb2Times.SelectedItems.Count == 0 || cmb2Types.SelectedItem == null)
             {
-                FullName = txtFullName.Text,
-                Email = txtEmail.Text,
-                Phone = txtPhone.Text,
-                PatientDays = new List<string>(),
-                PatientTimes = new List<string>(),
-                IsClient = chkNewPatient.IsChecked!.Value,
-                CreatedDate = DateTime.Now,
-            };
+                errorMessage.Visibility = Visibility.Visible;
+                successMessage.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                errorMessage.Visibility = Visibility.Hidden;
+                successMessage.Visibility = Visibility.Hidden;
 
-            foreach(var item in lb2Days.SelectedItems)
-            {
-                var itemDay = (Database.Models.Day)item;
-                newPatient.PatientDays.Add(itemDay!.NameOfDay!);
-            }
-             
-            foreach(var item in lb2Times.SelectedItems)
-            {
-                var itemTime = (Time)item;
-                newPatient.PatientTimes.Add(itemTime!.TimeOfDay!);
-            }
+                var newPatient = new PatientView()
+                {
+                    FullName = txtFullName.Text,
+                    Email = txtEmail.Text,
+                    Phone = txtPhone.Text,
+                    PatientDays = new List<string>(),
+                    PatientTimes = new List<string>(),
+                    IsClient = chkNewPatient.IsChecked!.Value,
+                    CreatedDate = DateTime.Now,
+                };
 
-            var reason = (Reason)cmb2Types.SelectedItem;
-            newPatient.Reason = reason.ReasonName;
-            newPatient.FullReason = reason.ReasonName;
-            try
-            {
-                _data!.AddPatient(newPatient);
-                ClearAddPatientFields();
-            }
-            catch (Exception ex)
-            {
-                throw new DbUpdateException($"Wasn't able to add patient to database, please check your connection and try again later. Error: {ex.Message}");
-            }
-            finally
-            {
-                Results = _data!.GetPatients();
-                listView.ItemsSource = Results;
-            }
+                foreach (var item in lb2Days.SelectedItems)
+                {
+                    var itemDay = (Database.Models.Day)item;
+                    newPatient.PatientDays.Add(itemDay!.NameOfDay!);
+                }
+
+                foreach (var item in lb2Times.SelectedItems)
+                {
+                    var itemTime = (Time)item;
+                    newPatient.PatientTimes.Add(itemTime!.TimeOfDay!);
+                }
+
+                var reason = (Reason)cmb2Types.SelectedItem!;
+                newPatient.Reason = reason.ReasonName;
+                newPatient.FullReason = reason.ReasonName;
+
+                try
+                {
+                    _data!.AddPatient(newPatient);
+                    ClearAddPatientFields();
+                }
+                catch (Exception ex)
+                {
+                    throw new DbUpdateException($"Wasn't able to add patient to database, please check your connection and try again later. Error: {ex.Message}");
+                }
+                finally
+                {
+                    Results = _data!.GetPatients();
+                    listView.ItemsSource = Results;
+                    successMessage.Visibility = Visibility.Visible;
+                }
+            } 
         }
 
         private async void RemovePatient_Click(object sender, RoutedEventArgs e)
@@ -193,6 +207,13 @@ namespace DTCWaitingList
             }
         }
 
+        private void ClearSearch_Click(object sender, RoutedEventArgs e)
+        {
+            lbDays.SelectedIndex = -1;
+            lbTimes.SelectedIndex = -1;
+            cmbTypes.SelectedIndex = -1;
+        }
+
         private void ClearAddPatientFields()
         {
             txtFullName.Text = "";
@@ -200,7 +221,7 @@ namespace DTCWaitingList
             txtPhone.Text = "";
             lb2Days.SelectedIndex = -1;
             lb2Times.SelectedIndex = -1;
-            cmbTypes.SelectedIndex = -1;
+            cmb2Types.SelectedIndex = -1;
             chkNewPatient.IsChecked = false;
         }
 
