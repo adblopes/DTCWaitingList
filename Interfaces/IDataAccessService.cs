@@ -5,7 +5,7 @@ namespace DTCWaitingList.Interfaces
 {
     public interface IDataAccessService
     {
-        public List<PatientView> GetPatients();
+        public List<PatientView>? GetPatients();
 
         public List<Day> GetDays();
 
@@ -18,5 +18,7 @@ namespace DTCWaitingList.Interfaces
         public void RemovePatient(int id);
 
         public void AddPatient(PatientView patientView);
+
+        public List<PatientView>? SearchPatients(Dictionary<string, object> conditions);
     }
 }

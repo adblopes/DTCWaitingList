@@ -1,6 +1,5 @@
 ﻿using DTCWaitingList.Database.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace DTCWaitingList.Database
 {
@@ -119,16 +118,53 @@ namespace DTCWaitingList.Database
         }
 
         // Generic method to search for patients based on any column or combination of columns
-        public List<Patient>? SearchPatients<T>(Expression<Func<Patient, bool>> predicate) where T : class, new()
+        public List<Patient> SearchPatients(Dictionary<string, object> conditions)
         {
-            //var list = GetPatientsAsync();
+            var query = from patient in Patients select patient;
 
-            //if (list != null)
-            //{
-            //    return list.Where(predicate.Compile()).ToList();
-            //}
+            if (conditions.ContainsKey("PatientDays"))
+            {
+                var pDays = (List<Day>)conditions["PatientDays"];
+                query = from patient in query
+                            join patientDay in PatientDays on patient.PatientId equals patientDay.PatientId
+                            where pDays.Contains(patientDay.Day!)
+                            select patient;
+            }
+            if (conditions.ContainsKey("PatientTimes"))
+            {
+                var pTimes = (List<Time>)conditions["PatientTimes"];
+                query = from patient in query
+                        join patientTime in PatientTimes on patient.PatientId equals patientTime.PatientId
+                        where pTimes.Contains(patientTime.Time!)
+                        select patient;
+            }
+            if (conditions.ContainsKey("Reason"))
+            {
+                var reason = (Reason)conditions["Reason"];
+                query = from patient in query
+                        where patient.ReasonId == reason.ReasonId
+                        select patient;
+            }
 
-            return null;
+            var patients = query.ToList();
+
+            var days = Days;
+            var times = Times;
+
+            foreach (Patient patient in patients)
+            {
+                foreach (PatientDay pd in patient.PatientDays!)
+                {
+                    pd.Day = days.First(d => d.DayId == pd.DayId);
+                }
+
+                foreach (PatientTime pt in patient.PatientTimes!)
+                {
+                    pt.Time = times.First(t => t.TimeId == pt.TimeId);
+                }
+            }
+
+            return patients;
         }
 
         public void AddPatient(Patient patient)

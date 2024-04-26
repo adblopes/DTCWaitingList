@@ -60,9 +60,9 @@ namespace DTCWaitingList
             var times = _data!.GetTimes();
             var types = _data!.GetReasons();
 
-            cmbDays.ItemsSource = days;
+            lbDays.ItemsSource = days;
             lb2Days.ItemsSource = days;
-            cmbTimes.ItemsSource = times;
+            lbTimes.ItemsSource = times;
             lb2Times.ItemsSource = times;
             cmbTypes.ItemsSource = types;
             cmb2Types.ItemsSource = types;
@@ -75,15 +75,43 @@ namespace DTCWaitingList
 
         private void SearchPatients_Click(object sender, RoutedEventArgs e)
         {
-            //var resultadosFiltrados = new List<Patient>();
-            //resultadosFiltrados = (List<Patient>)Results;
-            //if (cmbDiasDisponiveis.SelectedItem != null ||
-            //    cmbHoraDisponivel.SelectedItem != null ||
-            //    cmbTipoConsulta.SelectedItem != null)
-            //{
-            //    resultadosFiltrados = (List<Patient>)Results;
-            //}
-            //listView.ItemsSource = resultadosFiltrados;
+            var conditions = new Dictionary<string, object>();
+
+            if (lbDays.SelectedItems.Count != 0)
+            {
+                var firstDay = (Database.Models.Day)lbDays.SelectedItems[0]!;
+                if (firstDay.NameOfDay != "Any Day")
+                {
+                    var dayList = new List<Database.Models.Day>();
+                    foreach (var item in lbDays.SelectedItems)
+                    {
+                        dayList.Add((Database.Models.Day)item);
+                    }
+
+                    conditions.Add("PatientDays", dayList);
+                }
+            }
+            if (lbTimes.SelectedItems.Count != 0)
+            {
+                var firstTime = (Time)lbTimes.SelectedItems[0]!;
+                if (firstTime.TimeOfDay != "Any Time")
+                {
+                    var timeList = new List<Time>();
+                    foreach (var item in lbTimes.SelectedItems)
+                    {
+                        timeList.Add((Time)item);
+                    }
+
+                    conditions.Add("PatientTimes", timeList);
+                }
+            }
+            if (cmbTypes.SelectedItem != null)
+            {
+                conditions.Add("Reason", cmbTypes.SelectedItem);
+            }
+
+            Results = _data!.SearchPatients(conditions);
+            listView.ItemsSource = Results;
         }
 
         private void AddPacient_Click(object sender, RoutedEventArgs e)
@@ -113,7 +141,7 @@ namespace DTCWaitingList
 
             var reason = (Reason)cmb2Types.SelectedItem;
             newPatient.Reason = reason.ReasonName;
-
+            newPatient.FullReason = reason.ReasonName;
             try
             {
                 _data!.AddPatient(newPatient);
@@ -170,8 +198,8 @@ namespace DTCWaitingList
             txtFullName.Text = "";
             txtEmail.Text = "";
             txtPhone.Text = "";
-            cmbDays.SelectedIndex = -1;
-            cmbTimes.SelectedIndex = -1;
+            lb2Days.SelectedIndex = -1;
+            lb2Times.SelectedIndex = -1;
             cmbTypes.SelectedIndex = -1;
             chkNewPatient.IsChecked = false;
         }

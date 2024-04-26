@@ -17,13 +17,11 @@ namespace DTCWaitingList.Services
             _mapper = mapper;
         }
 
-        public List<PatientView> GetPatients()
+        public List<PatientView>? GetPatients()
         {
-            List<Patient> patient = _dbContext.GetPatients();
-
-            List<PatientView> patientView = _mapper.Map<List<Patient>, List<PatientView>>(patient);
-
-            return patientView;
+            List<Patient> patients = _dbContext.GetPatients();
+            List<PatientView> patientViews = _mapper.Map<List<Patient>, List<PatientView>>(patients);
+            return patientViews;
         }
 
         public List<Day> GetDays()
@@ -36,12 +34,12 @@ namespace DTCWaitingList.Services
             return _dbContext.GetTimes();
         }
 
-        //public async Task<List<Patient>> GetPatientsAsync(string[]? args)
-        //{
-        //    //parse search parameters
-        //    return await _dbContext.GetPatientsAsync();
-        //}
-
+        public List<PatientView>? SearchPatients(Dictionary<string, object> conditions)
+        {
+            var patients = _dbContext.SearchPatients(conditions);
+            List<PatientView> patientViews = _mapper.Map<List<Patient>, List<PatientView>>(patients);
+            return patientViews;
+        }
 
         public List<Reason> GetReasons()
         {

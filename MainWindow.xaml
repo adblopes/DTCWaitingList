@@ -170,23 +170,32 @@
 				<Grid>
 					<StackPanel Margin="10">
 						<TextBlock Text="Available Days" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
-						<ComboBox x:Name="cmbDays" Margin="0,0,0,10">
-							<ComboBox.ItemTemplate>
+						<ListBox SelectionMode="Multiple" x:Name="lbDays" Margin="5 5 0 0">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel Orientation="Horizontal"/>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
+							<ListBox.ItemTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding NameOfDay}" VerticalAlignment="Center" Margin="5"></TextBlock>
 								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
+							</ListBox.ItemTemplate>
+						</ListBox>
 
 						<TextBlock Text="Available Timeslots" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
-						<ComboBox x:Name="cmbTimes" Margin="0,0,0,10">
-							<ComboBox.ItemTemplate>
+						<ListBox SelectionMode="Multiple" x:Name="lbTimes" Margin="0,0,0,10">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel Orientation="Horizontal"/>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
+							<ListBox.ItemTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding TimeOfDay}" VerticalAlignment="Center" Margin="5"></TextBlock>
 								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
-
+							</ListBox.ItemTemplate>
+						</ListBox>
 						<TextBlock Text="Appointment Type" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
 						<ComboBox x:Name="cmbTypes" Margin="0,0,0,10">
 							<ComboBox.ItemTemplate>
