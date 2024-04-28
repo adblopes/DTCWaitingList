@@ -11,9 +11,6 @@ using System.Timers;
 
 namespace DTCWaitingList
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         public IServiceProvider Services { get; set; }
