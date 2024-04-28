@@ -63,7 +63,6 @@ namespace DTCWaitingList.Database
 
         public List<Patient> GetPatients()
         {
-            //retrieve day and time names to fill in the view later, possible async issue
             var patients = Patients.Include(p => p.PatientDays).Include(p => p.PatientTimes).Include(p => p.Reason).ToList();
             
             var days = Days;

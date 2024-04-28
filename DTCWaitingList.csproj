@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="appSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\thumbnail.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

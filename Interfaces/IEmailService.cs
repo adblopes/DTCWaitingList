@@ -3,7 +3,7 @@ using Google.Apis.Gmail.v1.Data;
 
 namespace DTCWaitingList.Interfaces
 {
-    //since there's no API to call, appointments are read from templated gmail messages
+    //appointments are read from templated gmail messages
     public interface IEmailService
     {
         //send Email reply

@@ -9,15 +9,13 @@ using DTCWaitingList.Interfaces;
 using System.Reflection;
 using MimeKit.Utils;
 using DTCWaitingList.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace DTCWaitingList.Services
 {
     public class EmailService : IEmailService
     {
-        // client configuration
-        const string clientID = "59857479736-te69q045pk1mimtme66oruukj8msbk0h.apps.googleusercontent.com";
-        const string clientSecret = "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";
-        const string hostEmail = "adlopesrepo@gmail.com";
+        private IConfiguration _config => App.Current.Configuration;
 
         private readonly IDataAccessService _data;
 
@@ -32,9 +30,9 @@ namespace DTCWaitingList.Services
         public async Task SendEmailAsync(string userEmail, string userName)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Dental Treatment Center", hostEmail));
+            message.From.Add(new MailboxAddress(_config.GetSection("Email:Content:HostName").Value, _config.GetSection("Email:Secrets:HostEmail").Value));
             message.To.Add(new MailboxAddress("", userEmail));
-            message.Subject = "Waiting List Confirmation - DO NOT REPLY";
+            message.Subject = _config.GetSection("Email:Secrets:Subject").Value;
 
             try
             {
@@ -62,7 +60,7 @@ namespace DTCWaitingList.Services
                 var rawMessage = ConvertToRaw(message);
                 var gmailMessage = new Message { Raw = rawMessage };
 
-                await _service.Users.Messages.Send(gmailMessage, hostEmail).ExecuteAsync();
+                await _service.Users.Messages.Send(gmailMessage, _config.GetSection("Email:Content:HostEmail").Value).ExecuteAsync();
             }
             catch (Exception ex)
             {
@@ -76,7 +74,7 @@ namespace DTCWaitingList.Services
 
             try
             {
-                Message message = _service.Users.Messages.Get(hostEmail, messageId).Execute();
+                Message message = _service.Users.Messages.Get(_config.GetSection("Email:Content:HostEmail").Value, messageId).Execute();
 
                 var data = Convert.FromBase64String(message.Payload.Parts[0].Body.Data);
 
@@ -133,7 +131,7 @@ namespace DTCWaitingList.Services
         {
             _service = AuthenticateGmailService();
 
-            var messages = ListMessages(hostEmail, "subject:(ProSites Appointment Request Response) is:unread");
+            var messages = ListMessages(_config.GetSection("Email:Content:HostEmail").Value!, "subject:(ProSites Appointment Request Response) is:unread");
 
             foreach (var message in messages)
             {
@@ -181,11 +179,11 @@ namespace DTCWaitingList.Services
             UserCredential credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
                 {
-                    ClientId = clientID,
-                    ClientSecret = clientSecret
+                    ClientId = _config.GetSection("Email:Secrets:ClientId").Value,
+                    ClientSecret = _config.GetSection("Email:Secrets:ClientSecret").Value
                 },
                 [GmailService.Scope.GmailModify],
-                hostEmail,
+                _config.GetSection("Email:Content:HostEmail").Value,
                 CancellationToken.None).Result;
 
             // Create the service.
@@ -214,7 +212,7 @@ namespace DTCWaitingList.Services
         private async Task DeleteEmailAsync(string messageId)
         {
             // prefer Trash over Delete as it moves to bin and is of less invasive scope
-            await _service.Users.Messages.Trash(hostEmail, messageId).ExecuteAsync();
+            await _service.Users.Messages.Trash(_config.GetSection("Email:Content:HostEmail").Value, messageId).ExecuteAsync();
         }
     }
 }
