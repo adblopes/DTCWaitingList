@@ -7,284 +7,332 @@
 		xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
 		mc:Ignorable="d"
 		Icon="Resources/agenda.ico"
-		Title="Dental Treatment Center Waiting List" Height="500" Width="974">
-	<Window.Resources>
-		<local:ListToStringConverter x:Key="ListToStringConverter"/>
-		<Style x:Key="PrimaryButtonStyle" TargetType="Button">
-			<Setter Property="Background" Value="#007ACC"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="Padding" Value="10"/>
-			<Setter Property="Margin" Value="5"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}" CornerRadius="5">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-		<Style x:Key="SmallButtonStyle" TargetType="Button">
-			<Setter Property="Width" Value="15"/>
-			<Setter Property="Height" Value="15"/>
-			<Setter Property="FontSize" Value="10"/>
-			<Setter Property="Background" Value="#007ACC"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Margin" Value="2"/>
-			<Setter Property="Padding" Value="0"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Grid>
-							<Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="2"/>
-							<TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Grid>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter TargetName="border" Property="Background" Value="#005A9E"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-	</Window.Resources>
-	<Grid Background="#F0F0F0">
-		<TabControl Name="tabControl">
-			<!-- First Tab "Results" -->
-			<TabItem Header="Results">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="*"/>
-					</Grid.RowDefinitions>
-					<StackPanel Orientation="Horizontal" Margin="10">
-					</StackPanel>
-					<ListView Grid.Row="1" x:Name="listView" ItemsSource="{Binding Resultados}" GridViewColumnHeader.Click="GridViewColumnHeader_Click">
-						<ListView.View>
-							<GridView x:Name="gridView">
-								<GridViewColumn Header="Name">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<GridViewColumnHeader Content="Name">
-											</GridViewColumnHeader>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-									<GridViewColumn.DisplayMemberBinding>
-										<Binding Path="FullName"/>
-									</GridViewColumn.DisplayMemberBinding>
-								</GridViewColumn>
+		Title="Dental Treatment Center Waiting List" Height="550" Width="974">
+    <Window.Resources>
+        <local:ListToStringConverter x:Key="ListToStringConverter"/>
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SmallButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="15"/>
+            <Setter Property="Height" Value="15"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="2"/>
+                            <TextBlock Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#005A9E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#F0F0F0">
+        <TabControl Name="tabControl">
+            
+            <!-- First Tab "Results" -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Results" FontWeight="Bold"/>
+                </TabItem.Header>   
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="227*"/>
+                        <ColumnDefinition Width="40*"/>
+                        <ColumnDefinition Width="141*"/>
+                        <ColumnDefinition Width="566*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="10,10,10,10" Grid.ColumnSpan="4">
+                    </StackPanel>
+                    <ListView Grid.Row="1" x:Name="listView" ItemsSource="{Binding Resultados}" GridViewColumnHeader.Click="GridViewColumnHeader_Click" Grid.ColumnSpan="4">
+                        <ListView.View>
+                            <GridView x:Name="gridView">
+                                <GridViewColumn Header="Name">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <GridViewColumnHeader Content="Name">
+                                            </GridViewColumnHeader>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                    <GridViewColumn.DisplayMemberBinding>
+                                        <Binding Path="FullName"/>
+                                    </GridViewColumn.DisplayMemberBinding>
+                                </GridViewColumn>
 
-								<GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Email"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Phone" DisplayMemberBinding="{Binding Phone}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Phone"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Available Days" DisplayMemberBinding="{Binding PatientDays, Converter={StaticResource ListToStringConverter}}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Available Days"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Available Timeslots" DisplayMemberBinding="{Binding PatientTimes, Converter={StaticResource ListToStringConverter}}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Available Timeslots"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Type" DisplayMemberBinding="{Binding Reason}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Type"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Current Patient" DisplayMemberBinding="{Binding IsClient}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Current Patient"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Type" DisplayMemberBinding="{Binding FullReason}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Message"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Waiting Since" DisplayMemberBinding="{Binding CreatedDate, StringFormat={}{0:dd/MM/yyyy}}">
-									<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="Waiting Since"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.HeaderTemplate>
-								</GridViewColumn>
+                                <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Email"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Phone" DisplayMemberBinding="{Binding Phone}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Phone"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Available Days" DisplayMemberBinding="{Binding PatientDays, Converter={StaticResource ListToStringConverter}}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Available Days"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Available Timeslots" DisplayMemberBinding="{Binding PatientTimes, Converter={StaticResource ListToStringConverter}}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Available Timeslots"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Reason}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Type"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Current Patient" DisplayMemberBinding="{Binding IsClient}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Current Patient"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding FullReason}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Message"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Waiting Since" DisplayMemberBinding="{Binding CreatedDate, StringFormat={}{0:dd/MM/yyyy}}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Waiting Since"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
 
-								<GridViewColumn Header="Remove" Width="100px">
-									<GridViewColumn.CellTemplate>
-										<DataTemplate>
-											<ui:Button Content="Remove" Click="RemovePatient_Click"/>
-										</DataTemplate>
-									</GridViewColumn.CellTemplate>
-								</GridViewColumn>
-							</GridView>
-						</ListView.View>
-					</ListView>
-				</Grid>
-			</TabItem>
+                                <GridViewColumn Header="Remove" Width="100px">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ui:Button Content="Remove" Click="RemovePatient_Click"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
 
-			<!-- Second Tab "Search Patient" -->
-			<TabItem Header="Search Patients">
-				<Grid>
-					<StackPanel Margin="10">
-						<TextBlock Text="Available Days" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
-						<ListBox SelectionMode="Multiple" x:Name="lbDays" Margin="5 5 0 0">
-							<ListBox.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel Orientation="Horizontal"/>
-								</ItemsPanelTemplate>
-							</ListBox.ItemsPanel>
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding NameOfDay}" VerticalAlignment="Center" Margin="5"></TextBlock>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
+            <!-- Second Tab "Search Patient" -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Search Patients" FontWeight="Bold"/>
+                </TabItem.Header>
+                
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
 
-						<TextBlock Text="Available Timeslots" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
-						<ListBox SelectionMode="Multiple" x:Name="lbTimes" Margin="0,0,0,10">
-							<ListBox.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel Orientation="Horizontal"/>
-								</ItemsPanelTemplate>
-							</ListBox.ItemsPanel>
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding TimeOfDay}" VerticalAlignment="Center" Margin="5"></TextBlock>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
-						<TextBlock Text="Appointment Type" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
-						<ComboBox x:Name="cmbTypes" Margin="0,0,0,10">
-							<ComboBox.ItemTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding ReasonName}" VerticalAlignment="Center" Margin="5"></TextBlock>
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
+                    <!-- Available Days -->
+                    <TextBlock Text="Available Days" FontSize="14" FontWeight="Bold" Margin="0 0 0 5" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+                    <ListBox SelectionMode="Multiple" x:Name="lbDays" Margin="0 0 0 10" Height="100" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" SelectionChanged="DaySelectionChanged">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding NameOfDay}" VerticalAlignment="Center" Margin="5"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
-						<Button Content="Search" Click="SearchPatients_Click" Margin="0,10,0,0" Background="#007ACC" Foreground="White" Padding="10" FontWeight="Bold" BorderThickness="0"/>
-						<Button Content="Clear" Click="ClearSearch_Click" Margin="0,10,0,0" Background="#007ACC" Foreground="White" Padding="10" FontWeight="Bold" BorderThickness="0"/>
-					</StackPanel>
-				</Grid>
-			</TabItem>
+                    <!-- Available Timeslots -->
+                    <TextBlock Text="Available Timeslots" FontSize="14" FontWeight="Bold" Margin="0 0 0 5" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
+                    <ListBox SelectionMode="Multiple" x:Name="lbTimes" Margin="0 0 0 10" Height="100" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" SelectionChanged="TimeSelectionChanged">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding TimeOfDay}" VerticalAlignment="Center" Margin="5"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
-			<!-- Third Tab - Add Patient -->
-			<TabItem Header="Add Patient">
-				<Grid Margin="10">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
+                    <!-- Appointment Type -->
+                    <TextBlock Text="Appointment Type" FontSize="14" FontWeight="Bold" Margin="0 0 0 5" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"/>
+                    <ComboBox x:Name="cmbTypes" Margin="0 0 0 10" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ReasonName}" VerticalAlignment="Center" Margin="5"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-					<!-- Title -->
-					<TextBlock Text="Add New Patient" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
+                    <!-- Buttons -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2">
+                        <Button Content="Search" Click="SearchPatients_Click" Margin="0 0 10 0" Background="#007ACC" Foreground="White" Padding="30 10 30 10" FontWeight="Bold" BorderThickness="0"/>
+                        <Button Content="Clear" Click="ClearSearch_Click" Background="#E0E0E0" Foreground="#333333" Padding="10" FontWeight="Bold" BorderThickness="0"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
 
-					<TextBlock Text="Full Name:" Grid.Row="1" FontWeight="Bold"/>
-					<TextBox x:Name="txtFullName" Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
+            <!-- Third Tab - Add Patient -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Add Patient" FontWeight="Bold"/>
+                </TabItem.Header>
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
 
-					<TextBlock Text="Email:" Grid.Row="3" FontWeight="Bold" Margin="0 10 0 0"/>
-					<TextBox x:Name="txtEmail" Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
+                    <!-- Title -->
+                    <TextBlock Text="Add New Patient" FontSize="16" FontWeight="Bold" Margin="0 0 0 10" Grid.ColumnSpan="4"/>
 
-					<TextBlock Text="Phone Number:" Grid.Row="4" FontWeight="Bold" Margin="0 10 0 0"/>
-					<TextBox x:Name="txtPhone" Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Width="200"/>
+                    <!-- Add Patient "Form" -->
+                    <TextBlock Text="Full Name:" Grid.Row="1" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtFullName" Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center"/>
 
-					<TextBlock Text="Available Days:" Grid.Row="5" FontWeight="Bold" Margin="0 10 0 0"/>
-					<ListBox SelectionMode="Multiple" x:Name="lb2Days" Grid.Row="5" Grid.Column="1" Margin="5 5 0 0">
-						<ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<StackPanel Orientation="Horizontal"/>
-							</ItemsPanelTemplate>
-						</ListBox.ItemsPanel>
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding NameOfDay}" VerticalAlignment="Center" Margin="5"></TextBlock>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+                    <TextBlock Text="Email:" Grid.Row="2" FontWeight="Bold" VerticalAlignment="Center" Margin="0 10 0 0"/>
+                    <TextBox x:Name="txtEmail" Grid.Row="2" Grid.Column="1" Margin="5" VerticalAlignment="Center"/>
 
-					<TextBlock Text="Available Timeslots:" Grid.Row="6" Grid.Column="0"  FontWeight="Bold" Margin="0 10 0 0"/>
-					<ListBox SelectionMode="Multiple" x:Name="lb2Times" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0">
-						<ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<StackPanel Orientation="Horizontal"/>
-							</ItemsPanelTemplate>
-						</ListBox.ItemsPanel>
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding TimeOfDay}" VerticalAlignment="Center" Margin="5"></TextBlock>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+                    <TextBlock Text="Phone Number:" Grid.Row="3" FontWeight="Bold" VerticalAlignment="Center" Margin="0 10 0 0"/>
+                    <TextBox x:Name="txtPhone" Grid.Row="3" Grid.Column="1" Margin="5" VerticalAlignment="Center"/>
 
-					<TextBlock Text="Appointment Type:" Grid.Row="7" FontWeight="Bold" Margin="0 10 0 0"/>
-					<ComboBox x:Name="cmb2Types" Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Width="200">
-						<ComboBox.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding ReasonName}" VerticalAlignment="Center" Margin="5"></TextBlock>
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
+                    <TextBlock Text="Available Days:" Grid.Row="4" FontWeight="Bold" VerticalAlignment="Center" Margin="0 10 0 0"/>
+                    <ListBox SelectionMode="Multiple" x:Name="lb2Days" Grid.Row="4" Grid.Column="1" Margin="5" Grid.ColumnSpan="3" SelectionChanged="DaySelectionChanged">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding NameOfDay}" VerticalAlignment="Center" Margin="5"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
-					<TextBlock Text="Patient is already a client?" Grid.Row="8" FontWeight="Bold" Margin="0 10 0 0"/>
-					<CheckBox x:Name="chkNewPatient" Grid.Row="8" Margin="199,5,0,0" FontWeight="Bold" VerticalAlignment="Top"/>
+                    <TextBlock Text="Available Timeslots:" Grid.Row="5" FontWeight="Bold" VerticalAlignment="Center" Margin="0 10 0 0"/>
+                    <ListBox SelectionMode="Multiple" x:Name="lb2Times" Grid.Row="5" Grid.Column="1" Margin="5" Grid.ColumnSpan="3" SelectionChanged="TimeSelectionChanged">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding TimeOfDay}" VerticalAlignment="Center" Margin="5"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
-					<Button Content="Add Patient" Click="AddPacient_Click" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0 10 0 0" Background="#007ACC" Foreground="White" Padding="15" FontWeight="Bold" BorderThickness="0"/>
-					<TextBlock x:Name="errorMessage" Text="Not all fields are filled in" Foreground="red" Grid.Row="9" HorizontalAlignment="Center" FontWeight="Bold" Visibility="Hidden" FontSize="24" Margin="0 10 0 0"/>
-					<TextBlock x:Name="successMessage" Text="Not all fields are filled in" Foreground="red" Grid.Row="9" HorizontalAlignment="Center" FontWeight="Bold" Visibility="Hidden" FontSize="24" Margin="0 10 0 0"/>
-				</Grid>
-			</TabItem>
-		</TabControl>
-	</Grid>
+                    <TextBlock Text="Appointment Type:" Grid.Row="6" FontWeight="Bold" VerticalAlignment="Center" Margin="0 10 0 0"/>
+                    <ComboBox x:Name="cmb2Types" Grid.Row="6" Grid.Column="1" Margin="5" VerticalAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ReasonName}" VerticalAlignment="Center" Margin="5"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Text="Patient is already a client?" Grid.Row="7" FontWeight="Bold" VerticalAlignment="Center" Margin="0 10 0 0"/>
+                    <CheckBox x:Name="chkNewPatient" Grid.Row="7" Grid.Column="1" Margin="5" VerticalAlignment="Center" Grid.ColumnSpan="3"/>
+
+                    <Button Content="Add Patient" Click="AddPacient_Click" Grid.Row="8" Grid.Column="3" HorizontalAlignment="Right" Margin="0 10 0 0" Background="#007ACC" Foreground="White" Padding="15" FontWeight="Bold" BorderThickness="0"/>
+
+                    <!-- Validation Messages -->
+                    <TextBlock x:Name="errorMessage" Text="Not all fields are filled in" Foreground="red" Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" FontWeight="Bold" Visibility="Hidden" FontSize="24" Margin="0 10 0 0"/>
+                    <TextBlock x:Name="successMessage" Text="Not all fields are filled in" Foreground="red" Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" FontWeight="Bold" Visibility="Hidden" FontSize="24" Margin="0 10 0 0"/>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
 </Window>

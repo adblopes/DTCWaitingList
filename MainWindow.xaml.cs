@@ -9,6 +9,7 @@ using System.Reflection;
 using Wpf.Ui.Controls;
 using System.Windows;
 using System.IO;
+using ListBox = System.Windows.Controls.ListBox;
 using MessageBox = Wpf.Ui.Controls.MessageBox;
 using Button = System.Windows.Controls.Button;
 using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
@@ -35,9 +36,6 @@ namespace DTCWaitingList
             e.Cancel = true;
             this.Hide();
             notifyIcon!.Visible = true;
-            notifyIcon!.BalloonTipTitle = "Aplicação Minimizada";
-            notifyIcon!.BalloonTipText = "Sua aplicação foi minimizada para a bandeja.";
-            notifyIcon!.ShowBalloonTip(3000);
         }
 
         private void InitializeMainWindow()
@@ -112,6 +110,76 @@ namespace DTCWaitingList
 
             Results = _data!.SearchPatients(conditions);
             listView.ItemsSource = Results;
+        }
+
+        private void DaySelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListBox? listBox = sender as ListBox;
+
+            if (listBox != null && listBox.SelectedItems.Count > 0)
+            {
+                if (e.AddedItems.Count > 0)
+                {
+                    var selectedItem = e.AddedItems[0] as Database.Models.Day;
+
+                    if (selectedItem!.NameOfDay == "Any Day")
+                    {
+                        foreach (var item in listBox.Items)
+                        {
+                            if (item != selectedItem)
+                            {
+                                listBox.SelectedItems.Remove(item);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Database.Models.Day day in listBox.Items)
+                        {
+                            if (day.NameOfDay == "Any Day")
+                            {
+                                listBox.SelectedItems.Remove(day);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        private void TimeSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListBox? listBox = sender as ListBox;
+
+            if (listBox != null && listBox.SelectedItems.Count > 0)
+            {
+                if (e.AddedItems.Count > 0)
+                {
+                    var selectedItem = e.AddedItems[0] as Time;
+
+                    if (selectedItem!.TimeOfDay == "Any Time")
+                    {
+                        foreach (var item in listBox.Items)
+                        {
+                            if (item != selectedItem)
+                            {
+                                listBox.SelectedItems.Remove(item);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Time time in listBox.Items)
+                        {
+                            if (time.TimeOfDay == "Any Time")
+                            {
+                                listBox.SelectedItems.Remove(time);
+                            }
+                        }
+
+                    }
+                }
+            }
         }
 
         private void AddPacient_Click(object sender, RoutedEventArgs e)
@@ -283,7 +351,32 @@ namespace DTCWaitingList
                 this.WindowState = WindowState.Normal;
                 notifyIcon.Visible = false;
             };
+
+            notifyIcon.MouseClick += NotifyIcon_MouseClick!;
         }
+
+        private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenuStrip menuStrip = new ContextMenuStrip();
+                menuStrip.Items.Add("Open DTC WL", null, OpenMenuItem_Click!);
+                menuStrip.Items.Add("Exit", null, ExitMenuItem_Click!);
+                notifyIcon!.ContextMenuStrip = menuStrip;
+            }
+        }
+
+        private void OpenMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = WindowState.Normal;
+        }
+
+        private void ExitMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+
     }
 }
 
